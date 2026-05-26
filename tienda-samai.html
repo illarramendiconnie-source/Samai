@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursos SAMAI · Connie Illarramendi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --purple-deep:  #3B2C5A;
+  --purple-main:  #4E3878;
+  --purple-mid:   #5C4489;
+  --purple-light: #7A6BA0;
+  --cream:        #F5EDD8;
+  --cream-soft:   #EDE0C4;
+  --gold:         #C9A96E;
+  --gold-light:   #DFC18C;
+  --white:        #FFFDF7;
+  --text-muted:   rgba(245,237,216,0.55);
+}
+
+body {
+  background: var(--purple-deep);
+  color: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 18px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(59,44,90,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,169,110,0.15);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 300; letter-spacing: 0.14em;
+  color: var(--cream); text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-back {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-muted); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.3s;
+}
+.nav-back:hover { color: var(--gold); }
+
+/* ── HERO ── */
+.hero {
+  padding: 160px 48px 80px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,169,110,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(78,56,120,0.5) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  position: relative; z-index: 1;
+  opacity: 0; animation: fadeUp 0.8s 0.1s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; width: 28px; height: 1px; background: var(--gold);
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; font-size: clamp(44px, 7vw, 80px);
+  line-height: 1.05; color: var(--cream); margin-bottom: 20px;
+  position: relative; z-index: 1;
+  opacity: 0; animation: fadeUp 0.9s 0.25s forwards;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: clamp(17px, 2.5vw, 22px);
+  color: var(--text-muted); max-width: 560px; margin: 0 auto;
+  line-height: 1.7;
+  position: relative; z-index: 1;
+  opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+}
+
+/* ── GRATIS BANNER ── */
+.gratis-banner {
+  margin: 60px 48px 0;
+  background: linear-gradient(135deg, rgba(201,169,110,0.12), rgba(201,169,110,0.05));
+  border: 1px solid rgba(201,169,110,0.3);
+  padding: 40px 56px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: center;
+  position: relative; overflow: hidden;
+  opacity: 0; animation: fadeUp 0.9s 0.55s forwards;
+}
+.gratis-banner::before {
+  content: 'GRATIS';
+  position: absolute; top: -20px; right: -10px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 100px; font-weight: 300;
+  color: rgba(201,169,110,0.06); line-height: 1;
+  letter-spacing: 0.1em; pointer-events: none;
+}
+.gratis-tag {
+  display: inline-block;
+  background: var(--gold); color: var(--purple-deep);
+  font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+  padding: 5px 14px; margin-bottom: 14px;
+  font-family: 'Jost', sans-serif; font-weight: 400;
+}
+.gratis-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 3vw, 32px); font-weight: 300;
+  color: var(--cream); margin-bottom: 10px;
+}
+.gratis-desc {
+  font-size: 14px; line-height: 1.8; color: var(--text-muted);
+}
+.btn-gratis {
+  display: inline-block;
+  border: 1px solid var(--gold); color: var(--gold);
+  font-family: 'Jost', sans-serif; font-weight: 400;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 16px 36px; text-decoration: none;
+  transition: all 0.3s; white-space: nowrap;
+}
+.btn-gratis:hover { background: var(--gold); color: var(--purple-deep); }
+
+/* ── PRODUCTOS ── */
+.productos {
+  padding: 80px 48px;
+}
+.productos-label {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.productos-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.productos-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.18; margin-bottom: 56px;
+}
+.productos-title em { font-style: italic; color: var(--gold); }
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(201,169,110,0.1);
+}
+
+.producto-card {
+  background: var(--purple-main);
+  padding: 48px 36px;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+  display: flex; flex-direction: column;
+}
+.producto-card:hover { background: var(--purple-mid); }
+
+.producto-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.producto-card:hover::after { opacity: 1; }
+
+.producto-icono {
+  width: 56px; height: 56px; margin-bottom: 28px;
+  position: relative; z-index: 1;
+}
+
+.producto-tipo {
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
+  font-weight: 400; position: relative; z-index: 1;
+}
+.producto-nombre {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 300;
+  line-height: 1.2; color: var(--cream);
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.producto-nombre em { font-style: italic; color: var(--gold-light); }
+
+.producto-desc {
+  font-size: 13px; line-height: 1.85;
+  color: var(--text-muted); margin-bottom: 28px;
+  flex: 1; position: relative; z-index: 1;
+}
+
+.producto-incluye {
+  list-style: none; margin-bottom: 32px;
+  position: relative; z-index: 1;
+}
+.producto-incluye li {
+  font-size: 12px; color: var(--text-muted);
+  padding: 7px 0; border-bottom: 1px solid rgba(201,169,110,0.08);
+  display: flex; gap: 10px; align-items: center;
+}
+.producto-incluye li::before { content: '·'; color: var(--gold); font-size: 18px; line-height: 1; flex-shrink: 0; }
+
+.producto-precio-wrap {
+  display: flex; align-items: flex-end; gap: 8px;
+  margin-bottom: 24px; position: relative; z-index: 1;
+}
+.producto-precio {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px; font-weight: 300; line-height: 1;
+  color: var(--cream);
+}
+.producto-moneda {
+  font-size: 11px; color: var(--text-muted);
+  letter-spacing: 0.08em; margin-bottom: 10px;
+}
+
+.btn-comprar {
+  display: block; text-align: center;
+  background: var(--gold); color: var(--purple-deep);
+  font-family: 'Jost', sans-serif; font-weight: 400;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 16px 24px; text-decoration: none;
+  transition: background 0.3s;
+  position: relative; z-index: 1;
+}
+.btn-comprar:hover { background: var(--gold-light); }
+
+/* número decorativo */
+.card-num {
+  position: absolute; bottom: -16px; right: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 110px; font-weight: 300;
+  color: rgba(201,169,110,0.05); line-height: 1;
+  pointer-events: none;
+}
+
+/* ── POR QUÉ ESTOS RECURSOS ── */
+.porque {
+  padding: 80px 48px;
+  background: var(--purple-deep);
+  border-top: 1px solid rgba(201,169,110,0.12);
+  border-bottom: 1px solid rgba(201,169,110,0.12);
+}
+.porque-inner {
+  max-width: 720px; margin: 0 auto; text-align: center;
+}
+.porque-label {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 24px; display: block;
+}
+.porque h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; font-size: clamp(26px, 4vw, 42px);
+  line-height: 1.22; color: var(--cream); margin-bottom: 24px;
+}
+.porque h2 em { font-style: italic; color: var(--gold); }
+.porque p {
+  font-size: 15px; line-height: 1.85; color: var(--text-muted);
+  margin-bottom: 48px;
+}
+.porque-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(201,169,110,0.1);
+  text-align: left;
+}
+.porque-item {
+  background: var(--purple-main); padding: 32px 28px;
+}
+.porque-item-icon {
+  font-size: 24px; margin-bottom: 14px; display: block;
+}
+.porque-item-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 300; color: var(--cream);
+  margin-bottom: 10px;
+}
+.porque-item-desc {
+  font-size: 13px; line-height: 1.75; color: var(--text-muted);
+}
+
+/* ── ESCALERA CTA ── */
+.escalera {
+  padding: 80px 48px; text-align: center;
+  background: var(--purple-main);
+}
+.escalera-inner { max-width: 560px; margin: 0 auto; }
+.escalera h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.18; color: var(--cream); margin-bottom: 16px;
+}
+.escalera h2 em { font-style: italic; color: var(--gold); }
+.escalera p {
+  font-size: 15px; line-height: 1.8; color: var(--text-muted);
+  margin-bottom: 36px;
+}
+.btn-samai {
+  display: inline-block;
+  background: var(--gold); color: var(--purple-deep);
+  font-family: 'Jost', sans-serif; font-weight: 400;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 20px 56px; text-decoration: none;
+  transition: background 0.3s;
+}
+.btn-samai:hover { background: var(--gold-light); }
+
+/* ── FOOTER ── */
+footer {
+  background: rgba(59,44,90,0.8);
+  border-top: 1px solid rgba(201,169,110,0.12);
+  padding: 32px 48px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.f-logo {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px;
+  font-weight: 300; letter-spacing: 0.14em; color: var(--cream);
+}
+.f-links { display: flex; gap: 24px; }
+.f-link { font-size: 11px; letter-spacing: 0.15em; color: var(--text-muted); text-decoration: none; }
+.f-link:hover { color: var(--gold); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width: 900px) {
+  .productos-grid { grid-template-columns: 1fr; }
+  .porque-grid { grid-template-columns: 1fr; }
+}
+@media(max-width: 768px) {
+  nav { padding: 14px 20px; }
+  .hero { padding: 120px 24px 60px; }
+  .gratis-banner { margin: 40px 24px 0; padding: 32px 28px; grid-template-columns: 1fr; }
+  .productos, .porque, .escalera { padding: 60px 24px; }
+  footer { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://illarramendiconnie-source.github.io/Samai/" class="nav-logo">S<span>a</span>mai</a>
+  <a href="https://illarramendiconnie-source.github.io/Samai/" class="nav-back">← Volver al inicio</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Recursos digitales · Connie Illarramendi</div>
+  <h1 class="hero-title">Herramientas para<br><em>tu sanación.</em></h1>
+  <p class="hero-sub">Recursos creados desde el Método SAMAI para que puedas trabajar tu mundo interior cuando quieras, donde quieras.</p>
+</section>
+
+<!-- GRATIS BANNER -->
+<div class="gratis-banner">
+  <div>
+    <span class="gratis-tag">Regalo para vos</span>
+    <div class="gratis-title">Workbook: Energía y Linaje Femenino</div>
+    <p class="gratis-desc">Un recorrido guiado para comenzar a sanar la herencia emocional de tu linaje femenino. Tu primer paso hacia adentro — completamente gratis.</p>
+  </div>
+  <a href="#" class="btn-gratis">Descargarlo gratis</a>
+</div>
+
+<!-- PRODUCTOS -->
+<section class="productos">
+  <div class="productos-label">Recursos de pago</div>
+  <h2 class="productos-title">Elegí lo que<br><em>necesitás hoy</em></h2>
+
+  <div class="productos-grid">
+
+    <!-- MEDITACIONES -->
+    <div class="producto-card">
+      <div class="card-num">1</div>
+      <svg class="producto-icono" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="28" cy="28" r="20" stroke="#C9A96E" stroke-width="1" opacity="0.4"/>
+        <circle cx="28" cy="28" r="12" stroke="#C9A96E" stroke-width="1" opacity="0.3"/>
+        <circle cx="28" cy="28" r="5" fill="#C9A96E" opacity="0.6"/>
+        <path d="M28 8 Q32 18 28 28 Q24 18 28 8Z" fill="#C9A96E" opacity="0.2"/>
+        <path d="M48 28 Q38 32 28 28 Q38 24 48 28Z" fill="#C9A96E" opacity="0.2"/>
+      </svg>
+      <div class="producto-tipo">Audio · mp3</div>
+      <div class="producto-nombre">Meditaciones<br><em>SAMAI</em></div>
+      <p class="producto-desc">5 meditaciones guiadas para acompañarte en tu proceso de sanación. Para escuchar cuando lo necesitás — en cualquier momento del día.</p>
+      <ul class="producto-incluye">
+        <li>5 audios en formato mp3</li>
+        <li>Acceso inmediato y descarga directa</li>
+        <li>Guía de uso recomendado</li>
+        <li>Escucha ilimitada, para siempre</li>
+      </ul>
+      <div class="producto-precio-wrap">
+        <div class="producto-precio">$9</div>
+        <div class="producto-moneda">USD · pago único</div>
+      </div>
+      <a href="#" class="btn-comprar">Quiero las meditaciones</a>
+    </div>
+
+    <!-- DIARIO SAMAI -->
+    <div class="producto-card">
+      <div class="card-num">2</div>
+      <svg class="producto-icono" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="10" width="28" height="36" rx="2" stroke="#C9A96E" stroke-width="1" opacity="0.4"/>
+        <line x1="20" y1="20" x2="36" y2="20" stroke="#C9A96E" stroke-width="1" opacity="0.5"/>
+        <line x1="20" y1="26" x2="36" y2="26" stroke="#C9A96E" stroke-width="1" opacity="0.4"/>
+        <line x1="20" y1="32" x2="30" y2="32" stroke="#C9A96E" stroke-width="1" opacity="0.3"/>
+        <rect x="11" y="12" width="4" height="32" rx="1" fill="#C9A96E" opacity="0.2"/>
+      </svg>
+      <div class="producto-tipo">PDF · Diario guiado</div>
+      <div class="producto-nombre">Diario<br><em>SAMAI</em></div>
+      <p class="producto-desc">Un diario terapéutico estructurado con preguntas y ejercicios para trabajar tu mundo interior a tu ritmo. Cada página, un espacio para volverte a vos.</p>
+      <ul class="producto-incluye">
+        <li>PDF descargable e imprimible</li>
+        <li>Preguntas guiadas por sesión</li>
+        <li>Espacio de reflexión y cierre</li>
+        <li>Alineado al Método SAMAI</li>
+      </ul>
+      <div class="producto-precio-wrap">
+        <div class="producto-precio">$15</div>
+        <div class="producto-moneda">USD · pago único</div>
+      </div>
+      <a href="#" class="btn-comprar">Quiero el diario</a>
+    </div>
+
+    <!-- MI FUTURO SELF -->
+    <div class="producto-card">
+      <div class="card-num">3</div>
+      <svg class="producto-icono" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28 10 L32 22 L44 22 L34 30 L38 42 L28 34 L18 42 L22 30 L12 22 L24 22 Z" stroke="#C9A96E" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M28 16 L30 23 L37 23 L31 27 L33 35 L28 31 L23 35 L25 27 L19 23 L26 23 Z" fill="#C9A96E" opacity="0.2"/>
+      </svg>
+      <div class="producto-tipo">PDF + Audio · Ejercicio</div>
+      <div class="producto-nombre">Mi<br><em>Futuro Self</em></div>
+      <p class="producto-desc">Un ejercicio profundo de visualización y escritura para conectar con la versión de vos que ya existe — y empezar a vivir desde ahí hoy.</p>
+      <ul class="producto-incluye">
+        <li>Ejercicio guiado en PDF</li>
+        <li>Audio de visualización (mp3)</li>
+        <li>Práctica de integración diaria</li>
+        <li>Instrucciones paso a paso</li>
+      </ul>
+      <div class="producto-precio-wrap">
+        <div class="producto-precio">$19</div>
+        <div class="producto-moneda">USD · pago único</div>
+      </div>
+      <a href="#" class="btn-comprar">Quiero el ejercicio</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- POR QUÉ -->
+<section class="porque">
+  <div class="porque-inner">
+    <span class="porque-label">Para qué sirven</span>
+    <h2>No son contenido.<br><em>Son herramientas reales.</em></h2>
+    <p>Cada recurso está creado desde la práctica terapéutica del Método SAMAI — no son genéricos. Fueron diseñados para que puedas trabajar tu mundo interior entre sesiones o como primer paso hacia un proceso más profundo.</p>
+    <div class="porque-grid">
+      <div class="porque-item">
+        <span class="porque-item-icon">🎧</span>
+        <div class="porque-item-title">Para usar cuando lo necesitás</div>
+        <p class="porque-item-desc">Sin horarios, sin agenda. Los recursos son tuyos para siempre y podés volver a ellos cuantas veces quieras.</p>
+      </div>
+      <div class="porque-item">
+        <span class="porque-item-icon">🌿</span>
+        <div class="porque-item-title">Creados desde el método</div>
+        <p class="porque-item-desc">No son ejercicios genéricos. Cada uno fue pensado desde la lógica terapéutica de SAMAI: cuerpo, emoción, mente y energía.</p>
+      </div>
+      <div class="porque-item">
+        <span class="porque-item-icon">✨</span>
+        <div class="porque-item-title">Un primer paso real</div>
+        <p class="porque-item-desc">Si todavía no estás lista para un proceso completo, estos recursos son un lugar hermoso para empezar a moverte.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA PROCESO -->
+<section class="escalera">
+  <div class="escalera-inner">
+    <h2>¿Sentís que necesitás<br><em>un acompañamiento más profundo?</em></h2>
+    <p>Los recursos son un comienzo. Si sentís que es momento de un proceso real — de raíz, con acompañamiento — el Método SAMAI completo te espera.</p>
+    <a href="https://illarramendiconnie-source.github.io/Samai/" class="btn-samai">Conocer el Proceso SAMAI</a>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">Samai</div>
+  <div class="f-links">
+    <a href="https://instagram.com/connieillarramendi" class="f-link">@connieillarramendi</a>
+    <a href="https://illarramendiconnie-source.github.io/Samai/" class="f-link">Volver al inicio</a>
+  </div>
+</footer>
+
+</body>
+</html>
