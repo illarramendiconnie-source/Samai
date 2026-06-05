@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Qué me dice mi cuerpo? — SAMAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pu1:#1A1030;
+  --pu2:#2D1B4E;
+  --pu3:#3D2660;
+  --pu4:#4E3272;
+  --or1:#C9A96E;
+  --or2:#E8C98A;
+  --or3:#F5DFA8;
+  --cr1:#F0EAE0;
+  --cr2:#DDD4C4;
+  --cr3:#B8AFA0;
+  --sage:#7A9E8E;
+  --sage2:#A8C4B8;
+  --wh:rgba(255,255,255,0.07);
+  --wh2:rgba(255,255,255,0.13);
+  --bd:rgba(201,169,110,0.22);
+  --bd2:rgba(201,169,110,0.42);
+}
+html,body{min-height:100vh;font-family:'Jost',sans-serif;background:var(--pu2);color:var(--cr1);font-weight:300}
+
+/* HEADER */
+.header{text-align:center;padding:2.5rem 1.5rem 2rem;background:var(--pu3);border-bottom:1px solid var(--wh2);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.12),transparent 70%);pointer-events:none}
+.orb{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F5DFA8,#C9A96E 65%,transparent 100%);margin:0 auto 1.25rem;opacity:.9}
+.hline{width:30px;height:.5px;background:var(--or1);display:inline-block;vertical-align:middle;margin:0 8px;opacity:.5}
+.header-eye{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--or1);margin-bottom:.7rem;display:block;font-weight:400}
+.header-h{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--cr1);line-height:1.12;margin-bottom:.6rem}
+.header-h em{font-style:italic;color:var(--or2)}
+.header-p{font-size:12.5px;color:var(--cr3);line-height:1.8;font-weight:300;max-width:360px;margin:0 auto}
+
+/* PROGRESS */
+.prog-wrap{padding:.8rem 1.5rem;background:var(--pu1);border-bottom:1px solid var(--wh)}
+.prog-bar{height:1.5px;background:var(--wh2);border-radius:2px;overflow:hidden;margin-bottom:.5rem}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--or1),var(--or2));border-radius:2px;transition:width .4s ease}
+.prog-steps{display:flex;justify-content:space-between}
+.ps{font-size:8.5px;color:var(--cr3);letter-spacing:.08em;text-transform:uppercase;opacity:.4;transition:all .25s}
+.ps.on{color:var(--or2);opacity:1}
+
+/* SCREENS */
+.screen{display:none;padding:1.75rem 1.5rem 2rem;max-width:500px;margin:0 auto;animation:fadeUp .3s ease}
+.screen.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.stitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--cr1);line-height:1.2;margin-bottom:.4rem}
+.stitle em{font-style:italic;color:var(--or2)}
+.ssub{font-size:12.5px;color:var(--cr3);line-height:1.75;margin-bottom:1.4rem;font-weight:300}
+
+/* OPTIONS */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1.25rem}
+.opts.c1{grid-template-columns:1fr}
+.opts.c3{grid-template-columns:1fr 1fr 1fr}
+
+.opt{
+  background:rgba(255,255,255,.025);
+  border:.5px solid var(--wh2);
+  border-radius:7px;padding:.85rem .9rem;
+  cursor:pointer;transition:all .18s;text-align:left;
+  position:relative;
+}
+.opt:hover{border-color:var(--bd2);background:rgba(201,169,110,.06)}
+.opt.on{border-color:var(--or1);background:rgba(201,169,110,.12)}
+.opt.on::after{content:'';position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--or1)}
+.opt-label{font-size:12.5px;font-weight:500;color:var(--cr2);line-height:1.3;margin-bottom:.2rem}
+.opt-sub{font-size:11px;color:var(--cr3);line-height:1.4;font-weight:300}
+
+/* COLOR DOT for zones */
+.zdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.opt-row{display:flex;gap:9px;align-items:flex-start}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;width:100%;background:var(--or1);color:var(--pu1);border:none;border-radius:3px;padding:.65rem 1.4rem;font-size:10.5px;font-family:'Jost',sans-serif;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.12em;text-transform:uppercase}
+.btn:hover{background:var(--or2)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--or2);border:.5px solid var(--bd2);font-weight:300;text-transform:none;letter-spacing:.03em;font-size:12px;margin-top:.6rem}
+.btn.sec:hover{background:rgba(201,169,110,.07)}
+.brow{display:flex;gap:7px;margin-top:1.25rem}
+.brow .btn{flex:1}
+.btn-back{background:rgba(255,255,255,.04);color:var(--cr3);border:.5px solid var(--wh2);text-transform:none;letter-spacing:.02em;font-size:12px;font-weight:300}
+.btn-back:hover{background:var(--wh);color:var(--cr1)}
+
+/* CARDS */
+.card{background:rgba(255,255,255,.025);border:.5px solid var(--wh2);border-radius:8px;padding:1rem 1.1rem;margin-bottom:.75rem}
+.card.gold{background:rgba(201,169,110,.07);border-color:var(--bd)}
+.card.sage{background:rgba(122,158,142,.06);border-color:rgba(122,158,142,.25);border-left:2px solid var(--sage)}
+.card.accent{border-left:2px solid var(--or1)}
+.clabel{font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--or1);margin-bottom:.4rem;font-weight:500;display:block}
+.clabel.s{color:var(--sage2)}
+.ctitle{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--cr1);margin-bottom:.3rem;line-height:1.3}
+.cbody{font-size:12.5px;color:var(--cr3);line-height:1.75;font-weight:300}
+.cbody b{color:var(--cr2);font-weight:500}
+
+.quote{border-left:2px solid var(--bd2);padding:.8rem 1.1rem;margin:1rem 0;background:rgba(201,169,110,.04);border-radius:0 6px 6px 0}
+.quote-t{font-family:'Cormorant Garamond',serif;font-size:16.5px;font-weight:300;font-style:italic;color:var(--cr2);line-height:1.6}
+
+.divider{height:.5px;background:var(--wh2);margin:1.25rem 0}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin:.5rem 0}
+.tag{font-size:10.5px;padding:3px 9px;border-radius:20px;background:rgba(201,169,110,.09);color:var(--or2);border:.5px solid var(--bd)}
+.tag.s{background:rgba(122,158,142,.09);color:var(--sage2);border-color:rgba(122,158,142,.3)}
+
+/* REPORTE */
+.report-hero{background:var(--pu3);border:.5px solid var(--bd2);border-radius:10px;padding:1.4rem;margin-bottom:1rem;text-align:center;position:relative;overflow:hidden}
+.report-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.12),transparent 70%)}
+.rh-eye{font-size:8px;text-transform:uppercase;letter-spacing:.2em;color:var(--or1);margin-bottom:.5rem;display:block;font-weight:400}
+.rh-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--cr1);line-height:1.2;margin-bottom:.4rem}
+.rh-title em{font-style:italic;color:var(--or2)}
+.rh-sub{font-size:12px;color:var(--cr3);line-height:1.6;font-weight:300}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--or2);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:.5px solid var(--bd);letter-spacing:.03em}
+
+.pregunta-list{list-style:none;margin:.3rem 0}
+.pregunta-list li{font-family:'Cormorant Garamond',serif;font-size:15.5px;font-style:italic;color:var(--cr2);padding:.4rem 0;line-height:1.55;border-bottom:.5px solid var(--wh);font-weight:300}
+.pregunta-list li::before{content:'"';color:var(--or1);margin-right:2px;font-size:18px}
+.pregunta-list li:last-child{border-bottom:none}
+
+.practica-list{list-style:none;margin:.3rem 0}
+.practica-list li{display:flex;gap:10px;padding:.5rem 0;font-size:12.5px;color:var(--cr3);line-height:1.5;border-bottom:.5px solid var(--wh);font-weight:300}
+.practica-list li:last-child{border-bottom:none}
+.pnum{width:18px;height:18px;border-radius:50%;background:rgba(201,169,110,.15);color:var(--or2);font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:.5px solid var(--bd);font-family:'Jost',sans-serif}
+
+.cta-box{background:var(--pu3);border:.5px solid var(--bd2);border-radius:10px;padding:1.4rem;margin-top:1.5rem;text-align:center}
+.cta-orb{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F5DFA8,#C9A96E 65%,transparent 100%);margin:0 auto .75rem;opacity:.85}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--cr1);margin-bottom:.4rem;line-height:1.2}
+.cta-title em{font-style:italic;color:var(--or2)}
+.cta-sub{font-size:12px;color:var(--cr3);line-height:1.65;margin-bottom:1rem;font-weight:300;max-width:340px;margin-left:auto;margin-right:auto}
+
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--wh)}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;color:var(--cr3);letter-spacing:.3em}
+.footer-sub{font-size:8.5px;color:var(--cr3);opacity:.4;letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+
+/* Ornamental divider */
+.orn{display:flex;align-items:center;gap:10px;margin:1.2rem 0}
+.orn-line{flex:1;height:.5px;background:var(--bd)}
+.orn-dot{width:4px;height:4px;border-radius:50%;background:var(--or1);opacity:.6}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="orb"></div>
+  <span class="header-eye"><span class="hline"></span>Connie Illarramendi · Método SAMAI<span class="hline"></span></span>
+  <h1 class="header-h">¿Qué me dice<br><em>mi cuerpo hoy?</em></h1>
+  <p class="header-p">Una guía de autoindagación que traduce tus síntomas en información sobre lo que necesitás trabajar.</p>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:14%"></div></div>
+  <div class="prog-steps">
+    <span class="ps on" id="ps1">Síntoma</span>
+    <span class="ps" id="ps2">Zona</span>
+    <span class="ps" id="ps3">Emoción</span>
+    <span class="ps" id="ps4">Patrón</span>
+    <span class="ps" id="ps5">Mapa</span>
+    <span class="ps" id="ps6">Reporte</span>
+  </div>
+</div>
+
+<!-- S1: SÍNTOMA -->
+<div class="screen on" id="s1">
+  <p class="stitle">¿Qué es lo que más<br><em>sentís hoy?</em></p>
+  <p class="ssub">Elegí lo que más resuena ahora mismo. Podés elegir más de uno.</p>
+  <div class="opts">
+    <div class="opt" onclick="toggleMulti(this,'sintoma','cansancio')">
+      <div class="opt-label">Cansancio extremo</div>
+      <div class="opt-sub">Agotamiento que no mejora con el descanso</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','dolor_fisico')">
+      <div class="opt-label">Dolor físico</div>
+      <div class="opt-sub">Que persiste sin causa médica clara</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','tension')">
+      <div class="opt-label">Tensión muscular</div>
+      <div class="opt-sub">Cuello, espalda, hombros apretados</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','digestivo')">
+      <div class="opt-label">Síntomas digestivos</div>
+      <div class="opt-sub">Panza cerrada, náuseas, colon irritable</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','insomnio')">
+      <div class="opt-label">Dificultad para dormir</div>
+      <div class="opt-sub">Insomnio, sueños intensos, no descanso</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','ansiedad')">
+      <div class="opt-label">Ansiedad</div>
+      <div class="opt-sub">Pecho apretado, respiración cortada</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','desconexion')">
+      <div class="opt-label">Desconexión</div>
+      <div class="opt-sub">Como en automático, no me siento presente</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','llanto')">
+      <div class="opt-label">Ganas de llorar</div>
+      <div class="opt-sub">Sin saber bien por qué, o todo me moviliza</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','irritabilidad')">
+      <div class="opt-label">Irritabilidad</div>
+      <div class="opt-sub">Todo me molesta, me siento al límite</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','cabeza')">
+      <div class="opt-label">Migrañas / presión</div>
+      <div class="opt-sub">En la cabeza, frente o nuca</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','piel')">
+      <div class="opt-label">Síntomas en la piel</div>
+      <div class="opt-sub">Urticaria, brotes, picazón sin causa</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'sintoma','vacio')">
+      <div class="opt-label">Vacío interno</div>
+      <div class="opt-sub">No encuentro sentido, sin motivación</div>
+    </div>
+  </div>
+  <button class="btn" onclick="next(2)" id="btn1" disabled>Continuar →</button>
+</div>
+
+<!-- S2: ZONA -->
+<div class="screen" id="s2">
+  <p class="stitle">¿Dónde lo <em>ubicás</em><br>en tu cuerpo?</p>
+  <p class="ssub">Cerrá los ojos un momento. ¿Dónde está la tensión, el nudo, el peso?</p>
+  <div class="opts c1">
+    <div class="opt" onclick="sel(this,'zona','corona')">
+      <div class="opt-row"><div class="zdot" style="background:#8B6AB8"></div><div><div class="opt-label">Cabeza, frente, ojos</div><div class="opt-sub">Presión mental, pensamientos que no paran, visión borrosa</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','garganta')">
+      <div class="opt-row"><div class="zdot" style="background:#4A8EB8"></div><div><div class="opt-label">Garganta, cuello, mandíbula</div><div class="opt-sub">Nudo, dificultad para hablar, tensión en la mandíbula</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','pecho')">
+      <div class="opt-row"><div class="zdot" style="background:#4A9E6A"></div><div><div class="opt-label">Pecho, corazón, hombros, brazos</div><div class="opt-sub">Opresión, carga, tristeza, dificultad para respirar</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','plexo')">
+      <div class="opt-row"><div class="zdot" style="background:#B8963E"></div><div><div class="opt-label">Estómago, plexo solar, diafragma</div><div class="opt-sub">Ansiedad, nervios, panza cerrada, digestión difícil</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','sacro')">
+      <div class="opt-row"><div class="zdot" style="background:#C4783A"></div><div><div class="opt-label">Vientre, caderas, zona sacra</div><div class="opt-sub">Menstrual, creatividad bloqueada, culpa, intimidad</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','raiz')">
+      <div class="opt-row"><div class="zdot" style="background:#C4513A"></div><div><div class="opt-label">Espalda baja, piernas, pies</div><div class="opt-sub">Inestabilidad, miedo básico, falta de raíces, cansancio profundo</div></div></div>
+    </div>
+    <div class="opt" onclick="sel(this,'zona','general')">
+      <div class="opt-row"><div class="zdot" style="background:var(--cr3)"></div><div><div class="opt-label">Todo el cuerpo / no sé ubicarlo</div><div class="opt-sub">Agotamiento general, dispersión, no puedo identificarlo</div></div></div>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(1)">← Volver</button>
+    <button class="btn" onclick="next(3)" id="btn2" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S3: EMOCIÓN -->
+<div class="screen" id="s3">
+  <p class="stitle">¿Qué <em>emoción</em><br>está más presente?</p>
+  <p class="ssub">Marcá todas las que resuenen. No hay respuesta incorrecta.</p>
+  <div class="opts">
+    <div class="opt" onclick="toggleMulti(this,'emocion','miedo')">
+      <div class="opt-label">Miedo · Angustia</div>
+      <div class="opt-sub">Al futuro, a equivocarse, a perder</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','tristeza')">
+      <div class="opt-label">Tristeza · Vacío</div>
+      <div class="opt-sub">Desgano, pesadez, ganas de llorar</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','rabia')">
+      <div class="opt-label">Rabia · Frustración</div>
+      <div class="opt-sub">Injusticia, hartazgo, límites violados</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','culpa')">
+      <div class="opt-label">Culpa · Vergüenza</div>
+      <div class="opt-sub">Sentí que fallé o que soy demasiado</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','soledad')">
+      <div class="opt-label">Soledad · Abandono</div>
+      <div class="opt-sub">Nadie me entiende, me siento sola</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','agotamiento')">
+      <div class="opt-label">Agotamiento · Hartazgo</div>
+      <div class="opt-sub">Doy todo y no recibo, no doy más</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','confusion')">
+      <div class="opt-label">Confusión · Bloqueo</div>
+      <div class="opt-sub">No sé qué quiero, no puedo decidir</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','preocupacion')">
+      <div class="opt-label">Preocupación crónica</div>
+      <div class="opt-sub">Mente que no para, siempre en alerta</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','desvalorizacion')">
+      <div class="opt-label">Desvalorización</div>
+      <div class="opt-sub">No me siento suficiente, me comparo</div>
+    </div>
+    <div class="opt" onclick="toggleMulti(this,'emocion','impotencia')">
+      <div class="opt-label">Impotencia</div>
+      <div class="opt-sub">Siento que nada depende de mí</div>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(2)">← Volver</button>
+    <button class="btn" onclick="next(4)" id="btn3" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S4: PATRÓN -->
+<div class="screen" id="s4">
+  <p class="stitle">¿Esto se <em>repite</em><br>en tu vida?</p>
+  <p class="ssub">La honestidad con esta pregunta es la puerta a la transformación real.</p>
+  <div class="opts c1">
+    <div class="opt" onclick="sel(this,'patron','nuevo')">
+      <div class="opt-label">Es algo nuevo que apareció ahora</div>
+      <div class="opt-sub">No lo había sentido antes con esta intensidad. Algo se está moviendo.</div>
+    </div>
+    <div class="opt" onclick="sel(this,'patron','repite')">
+      <div class="opt-label">Aparece y desaparece, pero siempre vuelve</div>
+      <div class="opt-sub">Lo trabajo, mejora un tiempo, y después vuelve de otra forma.</div>
+    </div>
+    <div class="opt" onclick="sel(this,'patron','siempre')">
+      <div class="opt-label">Siempre estuvo, es parte de cómo soy</div>
+      <div class="opt-sub">Lo llevo desde que me acuerdo. Lo naturalicé.</div>
+    </div>
+    <div class="opt" onclick="sel(this,'patron','familia')">
+      <div class="opt-label">Lo vi también en mi familia de origen</div>
+      <div class="opt-sub">Mi mamá, mi abuela u otro familiar lo vivían igual que yo.</div>
+    </div>
+    <div class="opt" onclick="sel(this,'patron','relaciones')">
+      <div class="opt-label">Se repite en mis vínculos y relaciones</div>
+      <div class="opt-sub">Siempre termino en el mismo lugar con distintas personas.</div>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(3)">← Volver</button>
+    <button class="btn" onclick="next(5)" id="btn4" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S5: MAPA -->
+<div class="screen" id="s5">
+  <p class="stitle">Tu <em>mapa interior</em></p>
+  <p class="ssub">Esto es lo que tu sistema está mostrando hoy. Tomá un momento antes de seguir.</p>
+  <div id="mapa-wrap"></div>
+  <div class="quote"><div class="quote-t" id="mapa-quote">"Lo que sentís hoy no es un error. Es información."</div></div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(4)">← Volver</button>
+    <button class="btn" onclick="showReporte()">Ver mi reporte completo →</button>
+  </div>
+</div>
+
+<!-- S6: REPORTE -->
+<div class="screen" id="s6">
+  <div class="report-hero">
+    <span class="rh-eye"><span class="hline"></span>Reporte SAMAI de autoindagación<span class="hline"></span></span>
+    <div class="rh-title" id="r-titulo">Tu proceso<br><em>hoy</em></div>
+    <div class="rh-sub" id="r-subtitulo"></div>
+  </div>
+
+  <div id="r-resumen"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">Lo que tu cuerpo está comunicando</div>
+  <div id="r-cuerpo"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">El origen emocional</div>
+  <div id="r-emocional"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">Lo que necesitás trabajar</div>
+  <div id="r-trabajar"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">Preguntas de autoindagación para esta semana</div>
+  <div class="card gold">
+    <ul class="pregunta-list" id="r-preguntas"></ul>
+  </div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">Tu práctica de esta semana</div>
+  <div class="card sage">
+    <span class="clabel s">Práctica diaria recomendada — 10 a 15 minutos</span>
+    <ul class="practica-list" id="r-practica"></ul>
+  </div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+
+  <div class="section-title">Una palabra para recordar</div>
+  <div class="quote"><div class="quote-t" id="r-frase"></div></div>
+
+  <div class="cta-box">
+    <div class="cta-orb"></div>
+    <div class="cta-title">¿Querés ir<br><em>más profundo?</em></div>
+    <div class="cta-sub" style="margin-bottom:1rem">Este reporte es el primer paso. En el Método SAMAI acompañamos este proceso en 5 sesiones integrativas donde trabajamos cuerpo, emoción, historia familiar y energía juntas.</div>
+    <button class="btn" style="margin-bottom:.6rem" onclick="alert('¡Gracias! Podés reservar tu sesión en samai.com')">Quiero una sesión SAMAI</button>
+    <button class="btn sec" onclick="restart()">Hacer el diagnóstico de nuevo</button>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">S a m a i</div>
+  <div class="footer-sub">Connie Illarramendi · Método Terapéutico Integrativo</div>
+</div>
+
+<script>
+// ── Estado ─────────────────────────────────────────
+const state = { sintoma:[], zona:'', emocion:[], patron:'' };
+
+// ── Data ───────────────────────────────────────────
+const zonas = {
+  corona:   { nombre:'Cabeza y mente', chakra:'Chakra corona y tercer ojo', color:'#8B6AB8', tema:'Conexión espiritual y claridad mental' },
+  garganta: { nombre:'Garganta y cuello', chakra:'Chakra garganta', color:'#4A8EB8', tema:'Expresión, verdad y comunicación' },
+  pecho:    { nombre:'Pecho y corazón', chakra:'Chakra corazón', color:'#4A9E6A', tema:'Amor, vínculos y apertura' },
+  plexo:    { nombre:'Estómago y plexo', chakra:'Plexo solar', color:'#B8963E', tema:'Poder personal, decisión y autonomía' },
+  sacro:    { nombre:'Vientre y sacro', chakra:'Chakra sacro', color:'#C4783A', tema:'Creatividad, placer y sexualidad' },
+  raiz:     { nombre:'Espalda baja y piernas', chakra:'Chakra raíz', color:'#C4513A', tema:'Seguridad, pertenencia y raíces' },
+  general:  { nombre:'Sistema completo', chakra:'Todos los centros', color:'var(--cr3)', tema:'Sobrecarga sistémica total' }
+};
+
+const emociones = {
+  miedo:         { tema:'Seguridad y confianza básica', dim:'profundo' },
+  tristeza:      { tema:'Conexión y amor propio', dim:'corazón' },
+  rabia:         { tema:'Límites y poder personal', dim:'plexo' },
+  culpa:         { tema:'Autovaloración y mandatos', dim:'sistema' },
+  soledad:       { tema:'Vínculos y pertenencia', dim:'sistémico' },
+  agotamiento:   { tema:'Equilibrio dar-recibir', dim:'transgeneracional' },
+  confusion:     { tema:'Identidad y dirección propia', dim:'mental' },
+  preocupacion:  { tema:'Control y confianza en la vida', dim:'mental' },
+  desvalorizacion:{ tema:'Autoestima y merecimiento', dim:'sistema' },
+  impotencia:    { tema:'Agencia y autonomía', dim:'plexo' }
+};
+
+const patrones = {
+  nuevo:     { nivel:'Proceso emergente', desc:'Algo nuevo se está abriendo. Tu sistema está en movimiento y buscando un nuevo orden.' },
+  repite:    { nivel:'Patrón cíclico', desc:'Este patrón tiene historia. Algo pide ser visto completamente para poder soltarse.' },
+  siempre:   { nivel:'Patrón estructural', desc:'Es un programa instalado muy temprano en tu historia. Tiene raíces profundas que pueden trabajarse.' },
+  familia:   { nivel:'Patrón transgeneracional', desc:'Hay lealtades invisibles al sistema familiar. Este no es solo tu patrón: lo heredaste.' },
+  relaciones:{ nivel:'Patrón vincular', desc:'El sistema se expresa a través de tus relaciones. Los vínculos son el espejo de tu mundo interior.' }
+};
+
+const reportes = {
+  corona: {
+    cuerpo: 'La zona de la cabeza concentra el exceso de procesamiento mental. Cuando la mente trabaja sin parar, el cuerpo lo manifiesta como presión, migrañas o visión borrosa. Es el sistema nervioso en modo alerta sostenida.',
+    herramienta: 'Decodificación emocional + Chakra corona y tercer ojo',
+    trabajar: ['Aprender a distinguir entre pensar y sentir', 'Desarrollar confianza en la intuición propia', 'Bajar información de la mente al cuerpo', 'Trabajar la creencia de que "tenés que entenderlo todo para estar bien"'],
+    preguntas: ['¿Qué escenario catastrófico está construyendo tu mente en este momento?','¿Cuándo fue la primera vez que aprendiste que necesitabas controlar todo para estar segura?','¿Qué pasaría si te permitieras no saber por un momento?','¿Qué diferencia hay entre lo que tu mente dice y lo que tu cuerpo siente?'],
+    practica: ['Respiración 4-7-8: inhalar 4 tiempos, sostener 7, exhalar 8. Repetir 5 ciclos', 'Escribir durante 10 minutos sin filtro todo lo que está en la mente, luego cerrar el cuaderno', 'Meditación de enraizamiento: pies en el suelo, 5 respiraciones profundas, visualizar raíces', 'Al final del día: anotar 3 cosas que salieron bien, sin analizar'],
+    frase: '"La mente es una herramienta poderosa. Pero no es la única forma de conocer la verdad."'
+  },
+  garganta: {
+    cuerpo: 'La garganta es el centro de la expresión y la verdad propia. El nudo, el dolor o la tensión en esa zona suelen aparecer cuando hay algo que se quiere decir y no se puede, o cuando existe un mandato antiguo de callar.',
+    herramienta: 'Decodificación emocional + Chakra garganta + Transgeneracional',
+    trabajar: ['Identificar qué es lo que no se está pudiendo decir', 'Reconocer de dónde viene el miedo a expresarse', 'Trabajar el mandato familiar relacionado con la voz y la expresión', 'Desarrollar el derecho a existir con voz propia'],
+    preguntas: ['¿Cuándo aprendiste que era peligroso o inadecuado expresar lo que sentías?','¿A quién en tu familia le costaba hablar o decir lo que pensaba?','¿Qué es lo que más querés decir y todavía no dijiste?','¿Qué creés que va a pasar si decís tu verdad?'],
+    practica: ['Poner la mano en la garganta y respirar hacia ahí 5 minutos en silencio', 'Escribir sin filtro lo que no podés decir en voz alta, como carta sin enviar', 'Tararear suavemente: la vibración de la voz activa y libera la garganta', 'Práctica de límite: esta semana decir "no" a algo sin dar explicaciones'],
+    frase: '"Tu voz no es un problema. Es tu verdad buscando un lugar donde ser recibida."'
+  },
+  pecho: {
+    cuerpo: 'El pecho y el corazón son el centro del amor, los vínculos y las pérdidas. La opresión, la carga en los hombros o la respiración cortada son señales de que el corazón está cargando algo que todavía no encontró cómo soltar.',
+    herramienta: 'Decodificación emocional + Chakra corazón + Constelaciones familiares',
+    trabajar: ['Identificar pérdidas o duelos que no fueron elaborados completamente', 'Trabajar la dificultad para recibir amor o cuidado', 'Explorar el equilibrio entre dar y recibir en los vínculos', 'Sanar la relación con la propia vulnerabilidad'],
+    preguntas: ['¿Qué pérdida o duelo todavía te pesa aunque parezca que ya lo superaste?','¿Te permitís recibir cuidado o solo te sentís cómoda dando?','¿A quién le tenés resentimiento que todavía no pudiste soltar?','¿Cuándo fue la última vez que lloraste de verdad y te sentiste mejor?'],
+    practica: ['Respiración al corazón: mano en el pecho, 5 respiraciones lentas sintiendo el latido', 'Carta de perdón o despedida a algo o alguien que todavía cargás', 'Ejercicio de recibir: esta semana aceptar un gesto de amor o ayuda sin minimizarlo', 'Antes de dormir: nombrar una cosa por la que tu corazón está agradecido'],
+    frase: '"El corazón que siente mucho no es un corazón débil. Es un corazón vivo."'
+  },
+  plexo: {
+    cuerpo: 'El plexo solar es el centro del poder personal, la autonomía y la capacidad de decidir. Los síntomas digestivos, la ansiedad o la tensión en el estómago aparecen cuando hay una dificultad para sostenerse desde adentro o cuando se siente que la vida la deciden otros.',
+    herramienta: 'Decodificación emocional + Chakra plexo solar + Proyecto sentido',
+    trabajar: ['Identificar en qué áreas de la vida sentís que no tenés poder', 'Trabajar la creencia de que las decisiones propias pueden estar equivocadas', 'Reconocer mandatos sobre "lo que una mujer debe ser o hacer"', 'Desarrollar la confianza en el propio criterio'],
+    preguntas: ['¿En qué parte de tu vida sentís que alguien más tiene el poder?','¿Cuándo aprendiste que tus decisiones podían ser equivocadas o peligrosas?','¿Qué decisión estás evitando tomar porque le tenés miedo al resultado?','¿Qué necesitarías para confiar más en tu propio criterio?'],
+    practica: ['Movimiento físico: caminar rápido, sacudir los brazos, mover el cuerpo activamente', 'Escribir 10 decisiones pequeñas que SÍ tomaste esta semana y sus resultados', 'Ejercicio de poder: elegir algo hoy solo porque vos querés, sin consultar', 'Respiración de fuego: inhalar y exhalar rápido por la nariz 20 veces'],
+    frase: '"Nadie puede darte el poder que ya tenés adentro. Solo podés recordar que está ahí."'
+  },
+  sacro: {
+    cuerpo: 'El vientre y la zona sacra son el centro de la creatividad, el placer, la sexualidad y las emociones fluidas. Los dolores menstruales, la dificultad para crear o la culpa asociada al placer son señales de bloqueos en este centro.',
+    herramienta: 'Decodificación emocional + Chakra sacro + Transgeneracional',
+    trabajar: ['Explorar la relación con el placer y si existe permiso para disfrutar', 'Identificar mandatos sobre la sexualidad o el cuerpo femenino en la familia', 'Trabajar la culpa como emoción central de este centro', 'Liberar la creatividad bloqueada como forma de expresión del ser'],
+    preguntas: ['¿Te permitís disfrutar sin sentir que tenés que ganarlo o merecerlo?','¿Qué mensajes recibiste en tu familia sobre el cuerpo de la mujer o la sexualidad?','¿En qué área de tu vida bloqueaste la creatividad o el placer?','¿Hay culpa que sentís que no es tuya pero la cargás igual?'],
+    practica: ['Movimiento libre: bailar 5 minutos sola con música que te guste, sin pensar', 'Escribir qué te daba placer de niña que dejaste de hacer', 'Baño consciente: dedicar tiempo a sentir el agua en el cuerpo sin apuro', 'Mapa del árbol: ¿qué mensajes sobre el cuerpo y el placer recibiste de tu familia?'],
+    frase: '"El placer no es un premio. Es un derecho. Y la culpa que sentís tiene una historia."'
+  },
+  raiz: {
+    cuerpo: 'La espalda baja, las piernas y los pies son el centro de la seguridad básica, el arraigo y la pertenencia. El cansancio profundo, la inestabilidad o el dolor en esa zona suelen hablar de un sistema que no encontró todavía dónde apoyarse.',
+    herramienta: 'Chakra raíz + Transgeneracional + Proyecto sentido',
+    trabajar: ['Explorar la historia de pertenencia y seguridad en la familia de origen', 'Identificar si hubo migraciones, exilios o inestabilidades en el árbol', 'Trabajar la creencia de que el mundo no es un lugar seguro', 'Desarrollar rituales de enraizamiento y estabilidad cotidiana'],
+    preguntas: ['¿Dónde aprendiste que no podías confiar en que las cosas iban a estar bien?','¿Hubo inestabilidad, migraciones o pérdidas de hogar en tu familia de origen?','¿Sentís que tenés un lugar en el mundo, en tu familia, en tu vida?','¿Qué necesitarías para sentirte más enraizada y segura en tu día a día?'],
+    practica: ['Enraizamiento: pies descalzos en la tierra o el piso, visualizar raíces profundas', 'Crear un ritual matutino simple que se repita cada día para dar estabilidad', 'Mapa del árbol: identificar inestabilidades o pérdidas de hogar en generaciones anteriores', 'Carta a la niña que no se sentía segura: decirle que hoy hay un lugar para ella'],
+    frase: '"Pertenecés. Aunque nadie te lo haya dicho. Aunque todavía no lo sientas del todo."'
+  },
+  general: {
+    cuerpo: 'Cuando el cuerpo entero está en sobrecarga, el sistema está pidiendo una pausa completa. No hay una zona específica porque todo está activado al mismo tiempo. Esto habla de un nivel de tensión sostenida que necesita atención integral.',
+    herramienta: 'Integración SAMAI completa — proceso de 5 sesiones recomendado',
+    trabajar: ['Identificar qué estás sosteniendo que no te pertenece', 'Aprender a reconocer las señales del cuerpo antes de llegar al límite', 'Explorar el patrón de dar hasta vaciarse', 'Crear rituales de higiene energética y autocuidado real'],
+    preguntas: ['¿Qué estás cargando que no es tuyo?','¿Cuándo fue la última vez que descansaste de verdad, sin culpa?','¿Qué parte de vos está pidiendo parar?','¿Para quién o para qué estás sosteniendo todo esto?'],
+    practica: ['24 horas de silencio digital: sin redes, sin noticias, solo vos', 'Práctica de enraizamiento y limpieza de campo: 15 minutos en silencio', 'Escribir en dos columnas: qué cargas que es tuyo / qué cargas que no es tuyo', 'Pedir ayuda con algo esta semana, aunque sea pequeño'],
+    frase: '"No podés vaciarte para llenar a otros. El autocuidado no es egoísmo. Es necesidad."'
+  }
+};
+
+// ── Navegación ─────────────────────────────────────
+function next(n) {
+  hide(); show('s'+n); updateProg(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if (n===5) buildMapa();
+}
+function back(n) { hide(); show('s'+n); updateProg(n); window.scrollTo({top:0,behavior:'smooth'}); }
+function hide(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); }
+function show(id){ const el=document.getElementById(id); if(el) el.classList.add('on'); }
+function updateProg(n){
+  const pcts=[14,28,44,60,80,100];
+  document.getElementById('prog').style.width=pcts[n-1]+'%';
+  for(let i=1;i<=6;i++) document.getElementById('ps'+i).classList.toggle('on',i<=n);
+}
+
+// ── Select single ───────────────────────────────────
+function sel(el, key, val){
+  el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+  el.classList.add('on'); state[key]=val;
+  el.closest('.screen').querySelector('.btn[onclick*="next"]').disabled=false;
+}
+
+// ── Toggle multi ────────────────────────────────────
+function toggleMulti(el, key, val){
+  el.classList.toggle('on');
+  state[key] = el.classList.contains('on')
+    ? [...state[key], val]
+    : state[key].filter(v=>v!==val);
+  const screen = el.closest('.screen');
+  const nBtn = screen.querySelector('.btn[onclick*="next"]') || screen.querySelector('.btn:not(.btn-back)');
+  if(nBtn) nBtn.disabled = state[key].length===0;
+}
+
+// ── Mapa interior ───────────────────────────────────
+function buildMapa(){
+  const z = zonas[state.zona] || zonas.general;
+  const p = patrones[state.patron] || patrones.repite;
+  const ems = state.emocion.map(e=>emociones[e]?.tema||e);
+
+  document.getElementById('mapa-wrap').innerHTML = `
+    <div class="card" style="margin-bottom:.75rem;border-left:2px solid ${z.color}">
+      <span class="clabel">Centro energético involucrado</span>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:.5rem">
+        <div style="width:28px;height:28px;border-radius:50%;background:${z.color};opacity:.85;flex-shrink:0"></div>
+        <div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--cr1)">${z.nombre}</div>
+          <div style="font-size:11px;color:var(--cr3)">${z.chakra}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--cr3)">${z.tema}</div>
+    </div>
+    <div class="card gold" style="margin-bottom:.75rem">
+      <span class="clabel">Tipo de proceso</span>
+      <div style="font-size:13.5px;font-weight:500;color:var(--cr1);margin-bottom:.3rem">${p.nivel}</div>
+      <div style="font-size:12px;color:var(--cr3);line-height:1.6">${p.desc}</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <span class="clabel">Áreas emocionales activas</span>
+      <div class="tag-row">${ems.map(e=>`<span class="tag">${e}</span>`).join('')}</div>
+    </div>
+  `;
+
+  const frases = {
+    miedo:'"El miedo te habla de algo que valorás profundamente."',
+    tristeza:'"La tristeza no es debilidad. Es el alma que todavía siente."',
+    rabia:'"La rabia dice que algo importa. Escuchala antes de soltarla."',
+    culpa:'"La culpa crónica tiene un origen que no empezó en vos."',
+    soledad:'"Sentirse sola en el proceso es señal de que necesitás contención real."',
+    agotamiento:'"El agotamiento de dar sin recibir tiene nombre en el árbol familiar."',
+    confusion:'"La confusión no es un defecto. Es la mente buscando un nuevo mapa."',
+    preocupacion:'"La preocupación es el miedo disfrazado de pensamiento."',
+    desvalorizacion:'"No te comparés. Tu historia es única y tu camino también."',
+    impotencia:'"La impotencia es una ilusión. Siempre hay algo que podés elegir."'
+  };
+  const primera = state.emocion[0];
+  if(frases[primera]) document.getElementById('mapa-quote').textContent = frases[primera];
+}
+
+// ── Reporte completo ────────────────────────────────
+function showReporte(){
+  next(6);
+  const z = zonas[state.zona] || zonas.general;
+  const p = patrones[state.patron] || patrones.repite;
+  const rep = reportes[state.zona] || reportes.general;
+  const ems = state.emocion.map(e=>emociones[e]);
+  const temas = state.emocion.map(e=>emociones[e]?.tema||e);
+
+  // Título dinámico
+  const titulo = {
+    corona:'Mente en<br><em>sobrecarga</em>',
+    garganta:'Voz y expresión<br><em>bloqueadas</em>',
+    pecho:'Corazón<br><em>cargado</em>',
+    plexo:'Poder personal<br><em>en pausa</em>',
+    sacro:'Creatividad y placer<br><em>bloqueados</em>',
+    raiz:'En busca de<br><em>raíces y seguridad</em>',
+    general:'Sistema completo<br><em>en sobrecarga</em>'
+  };
+  document.getElementById('r-titulo').innerHTML = titulo[state.zona] || 'Tu proceso<br><em>hoy</em>';
+  document.getElementById('r-subtitulo').innerHTML = `${z.nombre} · ${z.chakra} · ${p.nivel}`;
+
+  // Resumen
+  document.getElementById('r-resumen').innerHTML = `
+    <div class="card accent">
+      <span class="clabel">Tu perfil de hoy</span>
+      <div class="tag-row" style="margin-bottom:.6rem">
+        ${temas.map(t=>`<span class="tag">${t}</span>`).join('')}
+      </div>
+      <div class="cbody">${p.desc}</div>
+    </div>
+  `;
+
+  // Cuerpo
+  document.getElementById('r-cuerpo').innerHTML = `
+    <div class="card">
+      <span class="clabel">Herramienta SAMAI — <span style="color:var(--or2)">${rep.herramienta}</span></span>
+      <div class="cbody">${rep.cuerpo}</div>
+    </div>
+  `;
+
+  // Emocional
+  const emoHtml = state.emocion.map(e => {
+    const d = emociones[e];
+    return d ? `<div style="padding:.5rem 0;border-bottom:.5px solid var(--wh)"><div style="font-size:12.5px;font-weight:500;color:var(--cr2)">${d.tema}</div><div style="font-size:11.5px;color:var(--cr3);margin-top:2px">Dimensión ${d.dim}</div></div>` : '';
+  }).join('');
+  document.getElementById('r-emocional').innerHTML = `<div class="card">${emoHtml}</div>`;
+
+  // Trabajar
+  const trabajarHtml = rep.trabajar.map(t=>`
+    <div style="display:flex;gap:9px;padding:.5rem 0;border-bottom:.5px solid var(--wh);font-size:12.5px;color:var(--cr3);font-weight:300;line-height:1.5">
+      <div style="width:5px;height:5px;border-radius:50%;background:var(--or1);flex-shrink:0;margin-top:7px;opacity:.8"></div>
+      <div>${t}</div>
+    </div>
+  `).join('');
+  document.getElementById('r-trabajar').innerHTML = `<div class="card">${trabajarHtml}</div>`;
+
+  // Preguntas
+  document.getElementById('r-preguntas').innerHTML = rep.preguntas.map(q=>`<li>${q}</li>`).join('');
+
+  // Práctica
+  document.getElementById('r-practica').innerHTML = rep.practica.map((p,i)=>`
+    <li><div class="pnum">${i+1}</div><div>${p}</div></li>
+  `).join('');
+
+  // Frase
+  document.getElementById('r-frase').textContent = rep.frase;
+}
+
+function restart(){
+  state.sintoma=[]; state.zona=''; state.emocion=[]; state.patron='';
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+  document.querySelectorAll('.btn[onclick*="next"], .btn[onclick="showReporte()"]').forEach(b=>b.disabled=true);
+  next(1);
+}
+</script>
+</body>
+</html>
