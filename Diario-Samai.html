@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Diario SAMAI · Connie Illarramendi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; overflow:hidden; font-family:'Jost',sans-serif; font-weight:300; background:#1A1228; color:#fff; }
+
+/* ── PALETA GLOBAL ── */
+:root {
+  --purple:#3D2B5E; --purple-dk:#1A1228; --purple-md:#4E3878;
+  --purple-lt:#A89BC0; --purple-xl:#2A1F3D;
+  --cream:#F5F3E8; --gold:#C9956A; --gold-l:#E0B88A;
+  --tierra-bg:#2A1A0A; --tierra:#C4956A; --tierra-lt:#3D2510;
+  --agua-bg:#0A1A2A; --agua:#5B8FA8; --agua-lt:#0F2535;
+  --aire-bg:#0E1F0C; --aire:#7A9E6E; --aire-lt:#162B14;
+  --integ-bg:#1A0E2A; --integ:#8B6EA6; --integ-lt:#251540;
+  --fuego-bg:#2A0E08; --fuego:#C96B4A; --fuego-lt:#3D1508;
+}
+
+/* ── SCREENS ── */
+.screen { position:fixed; inset:0; opacity:0; pointer-events:none; transition:opacity 0.5s; display:flex; flex-direction:column; overflow:hidden; }
+.screen.active { opacity:1; pointer-events:all; }
+
+/* ── COVER ── */
+#cover {
+  background:radial-gradient(ellipse 120% 80% at 50% -10%, #4E3878 0%, #1A1228 55%);
+  align-items:center; justify-content:center; text-align:center; padding:40px 32px;
+}
+.cover-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.particle { position:absolute; border-radius:50%; opacity:0; animation:float 8s infinite; }
+.cover-eyebrow { font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:36px; opacity:0; animation:fadeUp 0.8s 0.2s forwards; }
+.cover-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(48px,13vw,70px); line-height:1.0; margin-bottom:6px; opacity:0; animation:fadeUp 0.8s 0.4s forwards; }
+.cover-title em { font-style:italic; color:var(--gold); }
+.cover-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; line-height:1.7; color:var(--purple-lt); margin-bottom:52px; opacity:0; animation:fadeUp 0.8s 0.6s forwards; }
+.cover-elems { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:52px; opacity:0; animation:fadeUp 0.8s 0.8s forwards; }
+.cover-elem { font-size:9px; letter-spacing:0.18em; text-transform:uppercase; padding:7px 14px; border-radius:20px; border:0.5px solid; }
+.btn-comenzar { background:var(--gold); color:#1A1228; font-family:'Jost',sans-serif; font-weight:500; font-size:12px; letter-spacing:0.22em; text-transform:uppercase; padding:20px 52px; border:none; cursor:pointer; transition:all 0.25s; opacity:0; animation:fadeUp 0.8s 1s forwards; }
+.btn-comenzar:active { transform:scale(0.97); }
+.cover-footer { position:absolute; bottom:28px; left:0; right:0; text-align:center; font-size:10px; letter-spacing:0.15em; color:var(--purple-lt); opacity:0; animation:fadeIn 1s 1.4s forwards; }
+
+/* ── MAP ── */
+#map-screen { background:var(--purple-dk); overflow-y:auto; }
+.map-inner { padding:52px 28px 60px; }
+.map-eyebrow { font-size:9px; letter-spacing:0.28em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.map-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:36px; line-height:1.15; margin-bottom:10px; }
+.map-sub { font-size:12px; color:var(--purple-lt); line-height:1.7; margin-bottom:40px; }
+.elem-list { display:flex; flex-direction:column; gap:10px; margin-bottom:40px; }
+.elem-row { display:flex; align-items:center; gap:16px; padding:22px 20px; border-radius:3px; cursor:pointer; transition:all 0.25s; border:0.5px solid rgba(255,255,255,0.06); position:relative; overflow:hidden; }
+.elem-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.elem-row:active { transform:scale(0.98); }
+.elem-row.done { border-color:rgba(201,149,106,0.25); }
+.elem-icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.elem-info { flex:1; }
+.elem-row-name { font-family:'Cormorant Garamond',serif; font-size:22px; line-height:1.1; margin-bottom:2px; }
+.elem-row-desc { font-size:10px; letter-spacing:0.1em; color:var(--purple-lt); text-transform:uppercase; }
+.elem-check { font-size:18px; color:var(--gold); }
+.btn-final-map { width:100%; background:var(--gold); color:#1A1228; font-family:'Jost',sans-serif; font-weight:500; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; padding:20px; border:none; cursor:pointer; margin-top:8px; }
+
+/* ── JOURNEY ── */
+#journey { }
+.j-bg { position:absolute; inset:0; transition:background 0.7s ease; }
+.j-content { position:relative; z-index:1; display:flex; flex-direction:column; height:100%; }
+
+/* Top bar */
+.j-top { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 12px; flex-shrink:0; }
+.j-elem-name { font-size:9px; letter-spacing:0.25em; text-transform:uppercase; color:rgba(255,255,255,0.45); }
+.j-dots { display:flex; gap:5px; align-items:center; }
+.jdot { height:5px; border-radius:3px; background:rgba(255,255,255,0.15); transition:all 0.4s; width:5px; }
+.jdot.done { background:var(--gold); opacity:0.6; }
+.jdot.active { width:16px; background:#fff; }
+.j-close { background:none; border:none; color:rgba(255,255,255,0.35); font-size:18px; cursor:pointer; padding:4px; line-height:1; }
+
+/* Step area */
+.j-steps { flex:1; position:relative; overflow:hidden; }
+.jstep { position:absolute; inset:0; padding:16px 28px 8px; display:flex; flex-direction:column; opacity:0; transform:translateX(32px); transition:all 0.4s cubic-bezier(0.4,0,0.2,1); pointer-events:none; overflow-y:auto; }
+.jstep.active { opacity:1; transform:translateX(0); pointer-events:all; }
+.jstep.out { opacity:0; transform:translateX(-32px); }
+.step-eyebrow { font-size:8px; letter-spacing:0.28em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:14px; flex-shrink:0; }
+.step-q { font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(22px,6.5vw,32px); line-height:1.25; margin-bottom:24px; flex-shrink:0; }
+.step-body { font-size:13px; line-height:1.8; color:rgba(255,255,255,0.6); margin-bottom:20px; flex-shrink:0; }
+.resp-area { flex:1; min-height:130px; background:rgba(255,255,255,0.05); border:0.5px solid rgba(255,255,255,0.1); padding:16px; color:#fff; font-family:'Cormorant Garamond',serif; font-size:17px; line-height:1.7; resize:none; outline:none; border-radius:2px; transition:border-color 0.3s; margin-bottom:16px; -webkit-appearance:none; }
+.resp-area::placeholder { color:rgba(255,255,255,0.18); font-style:italic; }
+.resp-area:focus { border-color:var(--gold); }
+
+/* Audio player */
+.audio-block { background:rgba(0,0,0,0.25); border-radius:4px; padding:20px 20px 16px; margin-bottom:20px; flex-shrink:0; }
+.audio-label { font-size:8px; letter-spacing:0.25em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:6px; }
+.audio-title { font-family:'Cormorant Garamond',serif; font-size:18px; color:#fff; margin-bottom:16px; }
+.audio-controls { display:flex; align-items:center; gap:14px; }
+.audio-play { width:48px; height:48px; border-radius:50%; border:1.5px solid; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:all 0.2s; }
+.audio-play:active { transform:scale(0.93); }
+.audio-play svg { width:16px; height:16px; }
+.audio-progress-wrap { flex:1; display:flex; flex-direction:column; gap:6px; }
+.audio-bar { height:3px; border-radius:2px; background:rgba(255,255,255,0.1); cursor:pointer; position:relative; overflow:hidden; }
+.audio-fill { height:100%; border-radius:2px; width:0%; transition:width 0.1s linear; }
+.audio-times { display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.35); }
+.audio-note { font-size:11px; color:rgba(255,255,255,0.35); font-style:italic; margin-top:10px; line-height:1.5; }
+
+/* Thermo */
+.thermo-opts { display:flex; gap:8px; margin:8px 0 16px; }
+.t-opt { flex:1; aspect-ratio:1; border-radius:50%; border:0.5px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:20px; color:rgba(255,255,255,0.4); cursor:pointer; transition:all 0.2s; background:rgba(255,255,255,0.04); max-width:52px; }
+.t-opt.sel { color:#fff; transform:scale(1.1); }
+.thermo-tags { display:flex; justify-content:space-between; font-size:9px; color:rgba(255,255,255,0.3); }
+
+/* Practice */
+.practice-wrap { background:rgba(0,0,0,0.2); border-radius:3px; padding:20px; margin-bottom:16px; flex-shrink:0; }
+.practice-tag { font-size:8px; letter-spacing:0.25em; text-transform:uppercase; margin-bottom:8px; }
+.practice-title { font-family:'Cormorant Garamond',serif; font-size:20px; margin-bottom:16px; }
+.practice-steps { list-style:none; }
+.practice-steps li { font-size:13px; line-height:1.75; color:rgba(255,255,255,0.7); padding:8px 0; border-bottom:0.5px solid rgba(255,255,255,0.05); display:flex; gap:14px; }
+.practice-steps li:last-child { border:none; }
+.pnum { flex-shrink:0; font-size:11px; color:var(--gold); margin-top:2px; }
+
+/* Word */
+.word-wrap { text-align:center; margin:12px 0 20px; }
+.word-in { width:100%; background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.15); color:#fff; font-family:'Cormorant Garamond',serif; font-size:40px; text-align:center; padding:12px 0; outline:none; transition:border-color 0.3s; }
+.word-in::placeholder { color:rgba(255,255,255,0.12); font-style:italic; }
+.word-in:focus { border-color:var(--gold); }
+.word-hint { font-size:10px; color:rgba(255,255,255,0.25); font-style:italic; }
+
+/* Affirmation */
+.aff-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 8px; }
+.aff-line { width:32px; height:1px; margin:0 auto 28px; }
+.aff-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(22px,6.5vw,30px); line-height:1.45; }
+
+/* Complete card */
+.complete-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px 24px; }
+.complete-circle { width:72px; height:72px; border-radius:50%; border:1px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:20px; animation:pulse 2.5s infinite; }
+.complete-title { font-family:'Cormorant Garamond',serif; font-size:30px; margin-bottom:10px; }
+.complete-sub { font-size:13px; color:rgba(255,255,255,0.5); line-height:1.7; max-width:240px; }
+
+/* Bottom nav */
+.j-nav { padding:14px 24px 36px; display:flex; gap:10px; flex-shrink:0; }
+.btn-back { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.45); border:none; padding:14px 18px; font-family:'Jost',sans-serif; font-size:12px; cursor:pointer; border-radius:2px; transition:all 0.2s; }
+.btn-next { flex:1; border:none; color:#1A1228; font-family:'Jost',sans-serif; font-weight:500; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; padding:16px; cursor:pointer; border-radius:2px; transition:all 0.25s; background:var(--gold); }
+.btn-next:active { transform:scale(0.97); }
+
+/* ── FINAL ── */
+#final-screen { background:radial-gradient(ellipse 100% 80% at 50% 20%, #2A1B45 0%, #0E0A18 60%); overflow-y:auto; align-items:center; justify-content:flex-start; padding:60px 32px 60px; text-align:center; }
+.final-eyebrow { font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
+.final-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(34px,9vw,50px); line-height:1.15; margin-bottom:16px; }
+.final-title em { font-style:italic; color:var(--gold); }
+.final-body { font-size:13px; line-height:1.8; color:var(--purple-lt); max-width:300px; margin:0 auto 36px; }
+.memory-card { width:100%; max-width:340px; background:rgba(255,255,255,0.04); border:0.5px solid rgba(201,149,106,0.25); border-radius:3px; padding:22px; margin-bottom:24px; text-align:left; }
+.memory-label { font-size:9px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+.memory-ta { width:100%; background:transparent; border:none; color:#fff; font-family:'Cormorant Garamond',serif; font-size:16px; line-height:1.7; outline:none; resize:none; min-height:80px; }
+.memory-ta::placeholder { color:rgba(255,255,255,0.18); font-style:italic; }
+.cta-final { width:100%; max-width:340px; background:rgba(255,255,255,0.04); border:0.5px solid rgba(201,149,106,0.15); border-radius:3px; padding:24px; margin-bottom:32px; }
+.cta-quote { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; line-height:1.65; color:var(--purple-lt); margin-bottom:16px; }
+.cta-link { font-size:11px; letter-spacing:0.18em; color:var(--gold); text-decoration:none; text-transform:uppercase; }
+.final-firma { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:rgba(255,255,255,0.4); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+@keyframes floatP { 0%{opacity:0;transform:translateY(0)} 20%{opacity:0.6} 100%{opacity:0;transform:translateY(-80px)} }
+
+::-webkit-scrollbar{width:2px} ::-webkit-scrollbar-thumb{background:var(--purple-md);border-radius:1px}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="screen active" id="cover">
+  <div class="cover-particles" id="particles"></div>
+  <div class="cover-eyebrow">Connie Illarramendi · Método SAMAI</div>
+  <h1 class="cover-title">Diario de<br><em>Autoindagación</em></h1>
+  <p class="cover-sub">Un recorrido por los 5 elementos.<br>Para volverte a vos.</p>
+  <div class="cover-elems">
+    <span class="cover-elem" style="color:var(--tierra);border-color:rgba(196,149,106,0.35)">Tierra</span>
+    <span class="cover-elem" style="color:var(--agua);border-color:rgba(91,143,168,0.35)">Agua</span>
+    <span class="cover-elem" style="color:var(--aire);border-color:rgba(122,158,110,0.35)">Aire</span>
+    <span class="cover-elem" style="color:var(--integ);border-color:rgba(139,110,166,0.35)">Integración</span>
+    <span class="cover-elem" style="color:var(--fuego);border-color:rgba(201,107,74,0.35)">Fuego</span>
+  </div>
+  <button class="btn-comenzar" onclick="goTo('map-screen')">Comenzar el recorrido</button>
+  <div class="cover-footer">@connieillarramendi · Método Terapéutico Integrativo</div>
+</div>
+
+<!-- MAP -->
+<div class="screen" id="map-screen">
+  <div class="map-inner">
+    <p class="map-eyebrow">Tu recorrido</p>
+    <h2 class="map-title">¿Por dónde<br>empezás hoy?</h2>
+    <p class="map-sub">Podés seguir el orden o elegir el elemento que más te llame ahora. No hay manera incorrecta.</p>
+    <div class="elem-list" id="elem-list"></div>
+    <p style="font-size:11px;color:var(--purple-lt);text-align:center;line-height:1.7">Tus respuestas se guardan en este dispositivo.<br>Podés cerrar y volver cuando quieras.</p>
+  </div>
+</div>
+
+<!-- JOURNEY -->
+<div class="screen" id="journey">
+  <div class="j-bg" id="j-bg"></div>
+  <div class="j-content">
+    <div class="j-top">
+      <span class="j-elem-name" id="j-elem-name"></span>
+      <div class="j-dots" id="j-dots"></div>
+      <button class="j-close" onclick="goTo('map-screen')">✕</button>
+    </div>
+    <div class="j-steps" id="j-steps"></div>
+    <div class="j-nav">
+      <button class="btn-back" id="btn-back" onclick="prevStep()">←</button>
+      <button class="btn-next" id="btn-next" onclick="nextStep()">Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div class="screen" id="final-screen">
+  <p class="final-eyebrow">Recorrido completo</p>
+  <h2 class="final-title">Completaste<br>los 5 <em>elementos.</em></h2>
+  <p class="final-body">Tierra te dio base. Agua movió lo que estaba quieto. Aire ordenó la mente. Integración bajó todo al cuerpo. Y Fuego te devolvió dirección.</p>
+  <div class="memory-card">
+    <div class="memory-label">Lo que quiero recordar</div>
+    <textarea class="memory-ta" id="final-memory" placeholder="Lo que emergió en este recorrido..." rows="4" oninput="saveMem()"></textarea>
+  </div>
+  <div class="cta-final">
+    <p class="cta-quote">"Si este recorrido te movió algo y querés ir más profundo, te acompaño en el Proceso SAMAI."</p>
+    <a class="cta-link" href="https://instagram.com/connieillarramendi" target="_blank">@connieillarramendi</a>
+  </div>
+  <p class="final-firma">Con presencia y cuidado, Connie</p>
+</div>
+
+<script>
+// ── ELEMENTOS DATA ────────────────────────────────────────────
+const ELEMS = [
+  {
+    id:'tierra', name:'Tierra', emoji:'🌱',
+    color:'#C4956A', bg:'linear-gradient(160deg,#1C0E04 0%,#2E1A08 50%,#1A0E1E 100%)',
+    desc:'Enraizamiento y base',
+    activacion: null,
+    meditacion: { src:'audio_tierra.mp3', title:'Meditación Chakra Raíz', label:'Meditación de cierre' },
+    steps:[
+      { type:'audio-activacion', label:'Activación de entrada', title:'Antes de comenzar', body:'Tomá un momento. Respirá. Esta activación te prepara para entrar a Tierra.' },
+      { type:'thermo', eyebrow:'¿Cómo llegás?', q:'¿Cómo está tu energía ahora mismo?', body:'Marcá sin pensar. Lo primero que sentís.' },
+      { type:'question', eyebrow:'Pregunta de entrada', q:'¿Cuándo te detenés y te preguntás cómo estás de verdad... qué aparece?', ph:'Escribí sin filtro...' },
+      { type:'question', eyebrow:'Indagación', q:'¿En qué área de tu vida sentís que te falta base o seguridad?', ph:'Lo que llega sin censura...' },
+      { type:'question', eyebrow:'Profundizando', q:'¿Qué heredaste de tu familia que sentís como propio... y quizás no lo es?', ph:'Las herencias que cargamos sin saberlo...' },
+      { type:'practice', tag:'Práctica', title:'Enraizamiento en 5 minutos',
+        steps:['Pararte con los pies bien apoyados. Descalza si podés.','Cerrar los ojos. Inhalar hasta 4, exhalar hasta 6. Cinco veces.','Imaginar raíces que salen de tus pies hacia la tierra.','Quedarte quieta 1 minuto. Observar cómo se siente el cuerpo.'] },
+      { type:'question', eyebrow:'Después de la práctica', q:'¿Qué sentiste? ¿Qué apareció en tu cuerpo?', ph:'Sin apuro, lo que llegue...' },
+      { type:'word', eyebrow:'Cierre de Tierra', q:'¿Con qué palabra salís de este elemento?', ph:'tu palabra' },
+      { type:'audio-meditacion', label:'Meditación de cierre', title:'Meditación Chakra Raíz', body:'Antes de cerrar Tierra, dejate llevar por esta meditación guiada.' },
+      { type:'affirmation', aff:'"Tengo lugar.\nTengo base.\nEstoy aquí y eso alcanza."' },
+    ]
+  },
+  {
+    id:'agua', name:'Agua', emoji:'🌊',
+    color:'#5B8FA8', bg:'linear-gradient(160deg,#040E1C 0%,#0A1A2E 50%,#1A0E2A 100%)',
+    desc:'Emoción y liberación',
+    activacion: null,
+    meditacion: { src:'audio_agua.mp3', title:'La niña interna', label:'Meditación de cierre' },
+    steps:[
+      { type:'audio-activacion', label:'Activación de entrada', title:'Antes de comenzar', body:'Respirá suave. Esta activación te abre al mundo emocional.' },
+      { type:'thermo', eyebrow:'¿Cómo llegás?', q:'¿Cómo está tu mundo emocional ahora?', body:'Marcá lo que sentís. Sin juzgar.' },
+      { type:'question', eyebrow:'Pregunta de entrada', q:'¿Qué emoción estás cargando hoy que todavía no encontró salida?', ph:'Sin juicio, lo que está ahí...' },
+      { type:'question', eyebrow:'Indagación', q:'¿Hay algo que quisieras haber dicho y no dijiste? ¿A quién? ¿Por qué?', ph:'Las palabras que se quedaron adentro...' },
+      { type:'question', eyebrow:'Profundizando', q:'¿Tu cuerpo dónde guarda la tensión? ¿Qué tiene para decirte?', ph:'El cuerpo siempre sabe...' },
+      { type:'practice', tag:'Práctica', title:'Carta de liberación',
+        steps:['Elegí una emoción que sentís que no pudo expresarse.','Escribile a esa emoción como si fuera una persona. Sin corregir.','No tenés que mostrarle esto a nadie.','Al terminar, podés quemar el papel. El acto de soltar también sana.'] },
+      { type:'question', eyebrow:'Después de la práctica', q:'¿Qué emoción sentís que empezó a moverse?', ph:'Lo que se movió adentro...' },
+      { type:'word', eyebrow:'Cierre de Agua', q:'¿Con qué palabra salís?', ph:'tu palabra' },
+      { type:'audio-meditacion', label:'Meditación de cierre', title:'La niña interna', body:'Cerrá Agua con esta meditación guiada.' },
+      { type:'affirmation', aff:'"Lo que siento es válido.\nTengo permiso de sentir\ny de soltar."' },
+    ]
+  },
+  {
+    id:'aire', name:'Aire', emoji:'🌿',
+    color:'#7A9E6E', bg:'linear-gradient(160deg,#061008 0%,#0E1F0C 50%,#1A1228 100%)',
+    desc:'Mente y creencias',
+    activacion: null, meditacion: null,
+    steps:[
+      { type:'thermo', eyebrow:'¿Cómo llegás?', q:'¿Cómo está tu mente ahora mismo?', body:'Marcá el nivel de ruido mental que traés.' },
+      { type:'question', eyebrow:'Pregunta de entrada', q:'¿Qué pensamiento se repite en tu cabeza y no te da descanso?', ph:'El que vuelve siempre...' },
+      { type:'question', eyebrow:'Indagación', q:'¿Qué te decís cuando cometés un error? ¿Le dirías lo mismo a alguien que querés?', ph:'El diálogo interno que a veces no escuchamos...' },
+      { type:'question', eyebrow:'Profundizando', q:'¿Qué creencia sobre vos misma te limita más? ¿De dónde viene?', ph:'Las historias que nos contamos...' },
+      { type:'practice', tag:'Práctica', title:'Observar los pensamientos',
+        steps:['Quedate quieta 3 minutos. Observá qué pensamientos aparecen sin cambiarlos.','Anotá los que llegaron. Solo anotar, no analizar.','Preguntate: ¿cuántos son hechos y cuántos son interpretaciones?','No tenés que cambiarlos hoy. Solo verlos ya es un acto de poder.'] },
+      { type:'question', eyebrow:'Después de la práctica', q:'¿Qué narrativa estás lista para soltar, aunque sea un poco?', ph:'Lo que ya no te sirve...' },
+      { type:'word', eyebrow:'Cierre de Aire', q:'¿Con qué palabra salís?', ph:'tu palabra' },
+      { type:'affirmation', aff:'"Mi valor no depende\nde lo que hago ni de lo\nque piensan. Ya soy suficiente."' },
+    ]
+  },
+  {
+    id:'integracion', name:'Integración', emoji:'✨',
+    color:'#8B6EA6', bg:'linear-gradient(160deg,#100820 0%,#1A0E30 50%,#0E0A18 100%)',
+    desc:'Cuerpo y presencia',
+    activacion: null, meditacion: null,
+    steps:[
+      { type:'thermo', eyebrow:'¿Cómo llegás?', q:'¿Cómo está tu presencia en el cuerpo ahora?', body:'Marcá cuánto sentís tu cuerpo en este momento.' },
+      { type:'question', eyebrow:'Pregunta de entrada', q:'¿Si tu cuerpo pudiera hablarte ahora mismo, qué te diría?', ph:'El cuerpo siempre sabe antes que la mente...' },
+      { type:'question', eyebrow:'Indagación', q:'¿Dónde en tu cuerpo sentís la tensión cuando algo no está bien?', ph:'Dónde vive la tensión...' },
+      { type:'question', eyebrow:'Profundizando', q:'¿Qué prácticas o momentos te ayudan a volver a vos cuando te perdiste?', ph:'Lo que te devuelve el eje...' },
+      { type:'practice', tag:'Práctica', title:'Escaneo corporal de 7 minutos',
+        steps:['Acuéstate o sentate cómodamente. Cerrá los ojos.','Llevá tu atención a los pies. Sin hacer nada, solo observá.','Subí lentamente: piernas, caderas, abdomen, pecho, hombros, cuello, cabeza.','Si encontrás tensión, respirá hacia ese lugar. Solo para reconocerla.','Quedate quieta 2 minutos al terminar.'] },
+      { type:'question', eyebrow:'Después del escaneo', q:'¿Qué parte de vos siente que empezó a habitarse diferente?', ph:'Lo que se asentó...' },
+      { type:'word', eyebrow:'Cierre de Integración', q:'¿Con qué palabra describís cómo está tu cuerpo?', ph:'tu palabra' },
+      { type:'affirmation', aff:'"Mi cuerpo es mi aliado.\nConfío en su sabiduría\ny en su proceso."' },
+    ]
+  },
+  {
+    id:'fuego', name:'Fuego', emoji:'🔥',
+    color:'#C96B4A', bg:'linear-gradient(160deg,#1E0804 0%,#2E0E06 50%,#1A1228 100%)',
+    desc:'Propósito y acción',
+    activacion: null,
+    meditacion: { src:'audio_fuego.mp3', title:'Activación del Plexo Solar', label:'Activación de cierre' },
+    steps:[
+      { type:'thermo', eyebrow:'¿Cómo llegás?', q:'¿Cuánto fuego sentís en vos ahora?', body:'Marcá tu nivel de energía vital.' },
+      { type:'question', eyebrow:'Pregunta de entrada', q:'¿Si no tuvieras miedo de fallar ni de lo que dirán, qué elegirías para vos?', ph:'Sin filtros, lo que el corazón sabe...' },
+      { type:'question', eyebrow:'Indagación', q:'¿En qué áreas de tu vida estás esperando permiso de alguien para moverte?', ph:'Dónde esperamos sin darnos cuenta...' },
+      { type:'question', eyebrow:'Visión', q:'¿Cómo se ve y se siente tu versión más alineada? Describila.', ph:'Ella ya existe adentro tuyo...' },
+      { type:'practice', tag:'Práctica', title:'Carta a tu versión futura',
+        steps:['Escribile una carta a la versión de vos que ya completó este recorrido.','Qué cambió. Qué soltó. Qué eligió. Qué se permite ahora.','Escribila en presente: "Hola, ya sé que elegiste..."','Doblala y guardala. Abrís en 3 meses.'] },
+      { type:'question', eyebrow:'Después de la práctica', q:'¿Cuál es el primer paso más pequeño y concreto que podés dar esta semana?', ph:'Una sola cosa. Concreta y real...' },
+      { type:'word', eyebrow:'Cierre de Fuego', q:'¿Con qué palabra salís?', ph:'tu palabra' },
+      { type:'audio-meditacion', label:'Activación de cierre', title:'Activación del Plexo Solar', body:'Cerrá Fuego con esta activación energética.' },
+      { type:'affirmation', aff:'"Tengo energía, dirección\ny capacidad de elegirme.\nMi fuego es mío."' },
+    ]
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────
+let curElem = 0, curStep = 0, responses = {}, activeAudio = null;
+
+function load() {
+  try {
+    const r = sessionStorage.getItem('samai_v2');
+    if(r) responses = JSON.parse(r);
+    const m = sessionStorage.getItem('samai_mem');
+    if(m) { const el = document.getElementById('final-memory'); if(el) el.value = m; }
+  } catch(e){}
+}
+function save() { try { sessionStorage.setItem('samai_v2', JSON.stringify(responses)); } catch(e){} }
+function saveMem() { try { sessionStorage.setItem('samai_mem', document.getElementById('final-memory').value); } catch(e){} }
+function saveResp(eid, si, val) { if(!responses[eid]) responses[eid]={}; responses[eid][si]=val; save(); }
+function isDone(eid) { return responses[eid] && responses[eid].complete; }
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function goTo(id) {
+  stopAudio();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='map-screen') renderMap();
+  if(id==='final-screen') { try { document.getElementById('final-memory').value = sessionStorage.getItem('samai_mem')||''; } catch(e){} }
+}
+
+// ── MAP ────────────────────────────────────────────────────────
+function renderMap() {
+  const container = document.getElementById('elem-list');
+  const allDone = ELEMS.every(e=>isDone(e.id));
+  let h = '';
+  ELEMS.forEach((e,i)=>{
+    const done = isDone(e.id);
+    h += `<div class="elem-row ${done?'completed':''}"
+      style="background:${e.bg.replace('160deg','180deg').split(',')[0].replace('linear-gradient(180deg','')}1A);border-left-color:${e.color}"
+      onclick="startElem(${i})">
+      <div class="elem-icon" style="background:${e.color}18;border:1px solid ${e.color}30">${e.emoji}</div>
+      <div class="elem-info">
+        <div class="elem-row-name" style="color:${done?e.color:'#fff'}">${e.name}</div>
+        <div class="elem-row-desc">${e.desc}</div>
+      </div>
+      <div class="elem-check">${done?'✓':'›'}</div>
+    </div>`;
+  });
+  if(allDone) h += `<button class="btn-final-map" onclick="goTo('final-screen')">Ver el cierre completo →</button>`;
+  container.innerHTML = h;
+}
+
+// ── AUDIO ──────────────────────────────────────────────────────
+function stopAudio() {
+  if(activeAudio) { activeAudio.pause(); activeAudio.currentTime=0; activeAudio=null; }
+}
+
+function buildAudioPlayer(src, color, containerId) {
+  const audio = new Audio(src);
+  activeAudio = audio;
+  let playing = false;
+  const container = document.getElementById(containerId);
+  if(!container) return;
+
+  function fmt(s) {
+    const m = Math.floor(s/60), sec = Math.floor(s%60);
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+
+  function update() {
+    const pct = audio.duration ? (audio.currentTime/audio.duration*100) : 0;
+    const fill = container.querySelector('.audio-fill');
+    const cur = container.querySelector('.cur-time');
+    const dur = container.querySelector('.dur-time');
+    if(fill) fill.style.width = pct+'%';
+    if(cur) cur.textContent = fmt(audio.currentTime);
+    if(dur && audio.duration) dur.textContent = fmt(audio.duration);
+  }
+
+  function togglePlay() {
+    if(playing) { audio.pause(); playing=false; }
+    else { audio.play(); playing=true; }
+    const btn = container.querySelector('.audio-play');
+    if(btn) btn.innerHTML = playing
+      ? `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`
+      : `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>`;
+  }
+
+  audio.addEventListener('timeupdate', update);
+  audio.addEventListener('ended', ()=>{ playing=false; const btn=container.querySelector('.audio-play'); if(btn) btn.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>`; });
+
+  container.querySelector('.audio-play').addEventListener('click', togglePlay);
+  container.querySelector('.audio-bar').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+  });
+}
+
+// ── JOURNEY ────────────────────────────────────────────────────
+function startElem(idx) {
+  curElem = idx; curStep = 0;
+  const e = ELEMS[idx];
+  document.getElementById('j-bg').style.background = e.bg;
+  document.getElementById('j-elem-name').textContent = `${e.emoji} ${e.name} · ${e.desc}`;
+  renderDots(e);
+  renderStep(e, 0);
+  goTo('journey');
+}
+
+function renderDots(e) {
+  const container = document.getElementById('j-dots');
+  container.innerHTML = e.steps.map((_,i)=>`<div class="jdot" id="jd-${i}"></div>`).join('');
+  updateDots(e);
+}
+
+function updateDots(e) {
+  e.steps.forEach((_,i)=>{
+    const d = document.getElementById(`jd-${i}`);
+    if(!d) return;
+    d.className = 'jdot';
+    if(i<curStep) d.classList.add('done');
+    else if(i===curStep) d.classList.add('active');
+  });
+}
+
+function renderStep(e, si) {
+  stopAudio();
+  const step = e.steps[si];
+  const saved = responses[e.id] && responses[e.id][si] ? responses[e.id][si] : '';
+  const color = e.color;
+  let h = `<div class="jstep active" id="cur-step">`;
+  h += `<div class="step-eyebrow">${step.eyebrow||step.label||''}</div>`;
+
+  switch(step.type) {
+    case 'audio-activacion':
+    case 'audio-meditacion': {
+      const hasSrc = step.type==='audio-activacion' ? e.activacion : e.meditacion;
+      h += `<div class="step-q">${step.title}</div>`;
+      h += `<p class="step-body">${step.body}</p>`;
+      if(hasSrc) {
+        const audioSrc = step.type==='audio-activacion' ? e.activacion.src : e.meditacion.src;
+        const audioTitle = step.type==='audio-activacion' ? e.activacion.title : e.meditacion.title;
+        h += `<div class="audio-block" id="audioplayer">
+          <div class="audio-label">${step.label}</div>
+          <div class="audio-title">${audioTitle}</div>
+          <div class="audio-controls">
+            <button class="audio-play" style="border-color:${color};color:${color}">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+            <div class="audio-progress-wrap">
+              <div class="audio-bar" style="cursor:pointer">
+                <div class="audio-fill" style="background:${color}"></div>
+              </div>
+              <div class="audio-times"><span class="cur-time">0:00</span><span class="dur-time">--:--</span></div>
+            </div>
+          </div>
+          <p class="audio-note">Podés escucharla y cuando termines presioná continuar.</p>
+        </div>`;
+      } else {
+        h += `<div class="audio-block" style="border-left:3px solid ${color};padding-left:16px">
+          <p style="font-size:13px;color:rgba(255,255,255,0.5);font-style:italic">Audio próximamente disponible.<br>Tomá un momento de respiración consciente antes de continuar.</p>
+        </div>`;
+      }
+      break;
+    }
+    case 'thermo':
+      h += `<div class="step-q">${step.q}</div>`;
+      h += `<p class="step-body">${step.body}</p>`;
+      h += `<div class="thermo-opts">`;
+      for(let n=1;n<=5;n++) {
+        h += `<div class="t-opt ${saved==n?'sel':''}" style="${saved==n?`background:${color};border-color:${color}`:`border-color:rgba(255,255,255,0.15)`}"
+          onclick="selThermo(this,${n},'${e.id}',${si},'${color}')">${n}</div>`;
+      }
+      h += `</div><div class="thermo-tags"><span>muy baja</span><span>muy alta</span></div>`;
+      break;
+    case 'question':
+      h += `<div class="step-q">${step.q}</div>`;
+      h += `<textarea class="resp-area" placeholder="${step.ph}"
+        style="border-color:${saved?color:'rgba(255,255,255,0.1)'}"
+        oninput="saveResp('${e.id}',${si},this.value)">${saved}</textarea>`;
+      break;
+    case 'practice':
+      h += `<div class="practice-wrap" style="border-left:3px solid ${color}">`;
+      h += `<div class="practice-tag" style="color:${color}">${step.tag}</div>`;
+      h += `<div class="practice-title">${step.title}</div>`;
+      h += `<ul class="practice-steps">`;
+      step.steps.forEach((s,i)=>{ h+=`<li><span class="pnum" style="color:${color}">${i+1}</span>${s}</li>`; });
+      h += `</ul></div>`;
+      h += `<p class="step-body">Tomá el tiempo que necesites. No hay apuro.</p>`;
+      break;
+    case 'word':
+      h += `<div class="step-q">${step.q}</div>`;
+      h += `<div class="word-wrap">
+        <input class="word-in" type="text" placeholder="${step.ph}" maxlength="25" value="${saved}"
+          style="border-color:${saved?color:'rgba(255,255,255,0.15)'}"
+          oninput="saveResp('${e.id}',${si},this.value);this.style.borderColor=this.value?'${color}':'rgba(255,255,255,0.15)'">
+        <p class="word-hint">No pienses. La primera que llegue.</p>
+      </div>`;
+      break;
+    case 'affirmation':
+      h += `<div class="aff-wrap">
+        <div class="aff-line" style="background:${color}"></div>
+        <div class="aff-text" style="color:#fff">${step.aff.replace(/\n/g,'<br>')}</div>
+        <div class="aff-line" style="background:${color};margin-top:28px"></div>
+      </div>`;
+      break;
+  }
+  h += `</div>`;
+  document.getElementById('j-steps').innerHTML = h;
+
+  // Init audio if needed
+  if((step.type==='audio-activacion'||step.type==='audio-meditacion') && document.getElementById('audioplayer')) {
+    const src = step.type==='audio-activacion' ? (e.activacion&&e.activacion.src) : (e.meditacion&&e.meditacion.src);
+    if(src) setTimeout(()=>buildAudioPlayer(src, color, 'audioplayer'), 100);
+  }
+
+  updateDots(e);
+  document.getElementById('btn-back').style.display = si===0?'none':'block';
+  const isLast = si===e.steps.length-1;
+  document.getElementById('btn-next').textContent = isLast ? 'Completar ✓' : 'Continuar →';
+  document.getElementById('btn-next').style.background = isLast ? color : 'var(--gold)';
+}
+
+function selThermo(el, val, eid, si, color) {
+  document.querySelectorAll('.t-opt').forEach(o=>{ o.classList.remove('sel'); o.style.background='rgba(255,255,255,0.04)'; o.style.borderColor='rgba(255,255,255,0.15)'; });
+  el.classList.add('sel'); el.style.background=color; el.style.borderColor=color;
+  saveResp(eid, si, val);
+}
+
+function nextStep() {
+  const e = ELEMS[curElem];
+  if(curStep < e.steps.length-1) {
+    const cur = document.getElementById('cur-step');
+    if(cur) { cur.classList.remove('active'); cur.classList.add('out'); }
+    curStep++;
+    setTimeout(()=>renderStep(e, curStep), 200);
+  } else {
+    if(!responses[e.id]) responses[e.id]={};
+    responses[e.id].complete = true; save();
+    const allDone = ELEMS.every(e=>isDone(e.id));
+    goTo(allDone ? 'final-screen' : 'map-screen');
+  }
+}
+
+function prevStep() {
+  if(curStep>0) {
+    const cur = document.getElementById('cur-step');
+    if(cur) { cur.style.opacity='0'; cur.style.transform='translateX(32px)'; }
+    curStep--;
+    setTimeout(()=>renderStep(ELEMS[curElem], curStep), 200);
+  }
+}
+
+// ── COVER PARTICLES ───────────────────────────────────────────
+function initParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#C4956A','#5B8FA8','#7A9E6E','#8B6EA6','#C96B4A'];
+  for(let i=0;i<12;i++) {
+    const p = document.createElement('div');
+    p.className='particle';
+    const c = colors[i%5];
+    const size = Math.random()*6+3;
+    p.style.cssText=`width:${size}px;height:${size}px;border-radius:50%;background:${c};
+      left:${Math.random()*100}%;top:${50+Math.random()*40}%;
+      animation:floatP ${5+Math.random()*6}s ${Math.random()*4}s infinite;opacity:0`;
+    container.appendChild(p);
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+load();
+initParticles();
+</script>
+</body>
+</html>
