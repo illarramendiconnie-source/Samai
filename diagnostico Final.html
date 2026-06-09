@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Qué me dice mi cuerpo? — SAMAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pu1:#1A1030;--pu2:#2D1B4E;--pu3:#3D2660;
+  --or1:#C9A96E;--or2:#E8C98A;--or3:#F5DFA8;
+  --cr1:#F0EAE0;--cr2:#DDD4C4;--cr3:#B8AFA0;
+  --wh:rgba(255,255,255,0.07);--wh2:rgba(255,255,255,0.12);
+  --bd:rgba(201,169,110,0.22);--bd2:rgba(201,169,110,0.45);
+}
+html,body{min-height:100vh;font-family:'Jost',sans-serif;background:#2D1B4E;color:#F0EAE0;font-weight:300}
+
+.header{text-align:center;padding:2.5rem 1.5rem 2rem;background:#3D2660;border-bottom:1px solid var(--wh2);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.1),transparent 70%);pointer-events:none}
+.orb{width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F5DFA8,#C9A96E 65%,transparent 100%);margin:0 auto 1.2rem;opacity:.88}
+.hline{width:28px;height:.5px;background:var(--or1);display:inline-block;vertical-align:middle;margin:0 8px;opacity:.45}
+.h-eye{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--or1);margin-bottom:.7rem;display:block;font-weight:400}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:#F0EAE0;line-height:1.12;margin-bottom:.6rem}
+.h-title em{font-style:italic;color:var(--or2)}
+.h-sub{font-size:12.5px;color:var(--cr3);line-height:1.8;font-weight:300;max-width:340px;margin:0 auto}
+
+.prog-wrap{padding:.8rem 1.5rem;background:#1A1030;border-bottom:1px solid var(--wh)}
+.prog-bar{height:1.5px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-bottom:.5rem}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--or1),var(--or2));transition:width .4s ease}
+.prog-labels{display:flex;justify-content:space-between}
+.pl{font-size:8px;color:var(--cr3);letter-spacing:.08em;text-transform:uppercase;opacity:.35;transition:all .25s}
+.pl.on{color:var(--or2);opacity:1}
+
+.screen{display:none;padding:1.75rem 1.5rem 2.5rem;max-width:480px;margin:0 auto;background:#2D1B4E;animation:up .3s ease}
+.screen.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.stitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#F0EAE0;line-height:1.2;margin-bottom:.4rem}
+.stitle em{font-style:italic;color:var(--or2)}
+.ssub{font-size:12.5px;color:var(--cr3);line-height:1.75;margin-bottom:1.4rem;font-weight:300}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1.25rem}
+.opts.c1{grid-template-columns:1fr}
+.opt{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.1);border-radius:7px;padding:.85rem .9rem;cursor:pointer;transition:all .18s;position:relative}
+.opt:hover{border-color:var(--bd2);background:rgba(201,169,110,.07)}
+.opt.on{border-color:var(--or1);background:rgba(201,169,110,.13)}
+.opt.on::after{content:'';position:absolute;top:8px;right:8px;width:5px;height:5px;border-radius:50%;background:var(--or1)}
+.opt-label{font-size:12.5px;font-weight:500;color:#DDD4C4;line-height:1.3;margin-bottom:.2rem}
+.opt-sub{font-size:11px;color:var(--cr3);line-height:1.4;font-weight:300}
+.zrow{display:flex;gap:10px;align-items:flex-start}
+.zind{width:2px;height:32px;border-radius:2px;flex-shrink:0;margin-top:2px;background:var(--or1);opacity:.4}
+.opt.on .zind{opacity:1}
+
+.btn{display:flex;align-items:center;justify-content:center;width:100%;background:var(--or1);color:#1A1030;border:none;border-radius:3px;padding:.65rem 1.4rem;font-size:10.5px;font-family:'Jost',sans-serif;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.12em;text-transform:uppercase}
+.btn:hover{background:var(--or2)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--or2);border:.5px solid var(--bd2);font-weight:300;text-transform:none;letter-spacing:.03em;font-size:12px;margin-top:.6rem}
+.btn.sec:hover{background:rgba(201,169,110,.07)}
+.brow{display:flex;gap:7px;margin-top:1.25rem}
+.brow .btn{flex:1}
+.btn-back{background:rgba(255,255,255,.04);color:var(--cr3);border:.5px solid var(--wh2);text-transform:none;letter-spacing:.02em;font-size:12px;font-weight:300}
+.btn-back:hover{background:var(--wh);color:#F0EAE0}
+
+.card{background:rgba(255,255,255,.04);border:.5px solid var(--wh2);border-radius:8px;padding:1rem 1.1rem;margin-bottom:.75rem}
+.card.gold{background:rgba(201,169,110,.08);border-color:var(--bd)}
+.card.left{border-left:2px solid var(--or1)}
+.card.sage{background:rgba(122,158,142,.06);border-left:2px solid rgba(122,158,142,.5)}
+.clabel{font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--or1);margin-bottom:.4rem;font-weight:500;display:block}
+.clabel.s{color:rgba(122,158,142,.9)}
+.cbody{font-size:12.5px;color:var(--cr3);line-height:1.8;font-weight:300}
+.cbody b{color:#DDD4C4;font-weight:500}
+
+.quote{border-left:2px solid var(--bd2);padding:.8rem 1.1rem;margin:1rem 0;background:rgba(201,169,110,.04);border-radius:0 6px 6px 0}
+.quote-t{font-family:'Cormorant Garamond',serif;font-size:16.5px;font-weight:300;font-style:italic;color:#DDD4C4;line-height:1.6}
+
+.orn{display:flex;align-items:center;gap:10px;margin:1.4rem 0}
+.orn-line{flex:1;height:.5px;background:var(--bd)}
+.orn-dot{width:4px;height:4px;border-radius:50%;background:var(--or1);opacity:.55}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin:.5rem 0}
+.tag{font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(201,169,110,.1);color:var(--or2);border:.5px solid var(--bd)}
+
+.disclaimer{background:rgba(255,255,255,.02);border:.5px solid var(--wh2);border-radius:6px;padding:.8rem 1rem;margin:.9rem 0;font-size:10.5px;color:var(--cr3);line-height:1.65;font-weight:300;font-style:italic}
+
+/* MAPA PARCIAL */
+.mapa-item{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.04);border:.5px solid var(--wh2);border-radius:8px;padding:.9rem;margin-bottom:.5rem}
+.mapa-barra-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+.mapa-barra{width:3px;border-radius:2px;background:var(--or1)}
+.mapa-num{font-size:8.5px;color:var(--or1);font-weight:500;font-family:'Jost',sans-serif}
+.mapa-info{flex:1}
+.mapa-zona-name{font-size:13px;font-weight:500;color:#DDD4C4;margin-bottom:.15rem}
+.mapa-zona-sub{font-size:11px;color:var(--cr3);font-weight:300}
+.mapa-tag{display:inline-block;font-size:9.5px;padding:2px 8px;border-radius:10px;background:rgba(201,169,110,.12);color:var(--or2);border:.5px solid var(--bd);margin-top:.3rem}
+
+.blur-card{background:rgba(255,255,255,.04);border:.5px solid var(--wh2);border-radius:8px;padding:.9rem;margin-bottom:.5rem;position:relative;overflow:hidden}
+.blur-inner{filter:blur(5px);user-select:none;pointer-events:none;font-size:12px;color:var(--cr3);line-height:1.7}
+.blur-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(45,27,78,.96) 65%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:.75rem}
+.blur-lock{font-size:9.5px;color:var(--or1);letter-spacing:.1em;text-transform:uppercase}
+
+/* PAYWALL */
+.pw-box{background:#3D2660;border:.5px solid var(--bd2);border-radius:10px;padding:1.5rem;margin:1.25rem 0;text-align:center}
+.pw-orb{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F5DFA8,#C9A96E 65%,transparent 100%);margin:0 auto .9rem;opacity:.85}
+.pw-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:300;color:#F0EAE0;line-height:1.2;margin-bottom:.4rem}
+.pw-title em{font-style:italic;color:var(--or2)}
+.pw-sub{font-size:12px;color:var(--cr3);line-height:1.65;margin-bottom:.75rem;font-weight:300}
+.pw-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--or2);margin-bottom:.2rem}
+.pw-price span{font-size:13px;color:var(--cr3);font-family:'Jost',sans-serif;font-weight:300}
+.pw-list{list-style:none;margin:.6rem 0 1rem;text-align:left}
+.pw-list li{display:flex;gap:8px;font-size:12px;color:var(--cr3);padding:.35rem 0;border-bottom:.5px solid var(--wh);font-weight:300}
+.pw-list li:last-child{border-bottom:none}
+.pw-dot{color:var(--or1);flex-shrink:0}
+.key-wrap{margin-top:1.1rem;padding-top:1.1rem;border-top:.5px solid var(--wh2)}
+.key-label{font-size:10px;color:var(--cr3);margin-bottom:.5rem;display:block;letter-spacing:.05em}
+.key-input{width:100%;background:rgba(255,255,255,.05);border:.5px solid var(--wh2);border-radius:4px;padding:.6rem .8rem;color:#F0EAE0;font-family:'Jost',sans-serif;font-size:13px;font-weight:300;outline:none;transition:border .2s;text-transform:uppercase;letter-spacing:.08em}
+.key-input:focus{border-color:var(--or1)}
+.key-input::placeholder{color:var(--cr3);opacity:.4;text-transform:none;letter-spacing:0}
+.key-err{font-size:11px;color:#E8826A;margin-top:.4rem;display:none}
+.key-ok{font-size:11px;color:#7AC4A8;margin-top:.4rem;display:none}
+
+.div-text{font-size:10px;color:var(--cr3);text-align:center;margin:1rem 0;opacity:.55;letter-spacing:.1em;text-transform:uppercase}
+
+.ses-box{background:rgba(255,255,255,.03);border:.5px solid var(--wh2);border-radius:10px;padding:1.25rem;text-align:center}
+.ses-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;color:#F0EAE0;margin-bottom:.35rem;line-height:1.2}
+.ses-title em{font-style:italic;color:var(--or2)}
+.ses-sub{font-size:12px;color:var(--cr3);line-height:1.6;margin-bottom:.85rem;font-weight:300}
+
+/* REPORTE */
+.rep-hero{background:#3D2660;border:.5px solid var(--bd2);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;text-align:center;position:relative;overflow:hidden}
+.rep-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.1),transparent 70%)}
+.rep-eye{font-size:8px;text-transform:uppercase;letter-spacing:.2em;color:var(--or1);margin-bottom:.55rem;display:block;font-weight:400}
+.rep-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:#F0EAE0;line-height:1.15;margin-bottom:.4rem}
+.rep-title em{font-style:italic;color:var(--or2)}
+.rep-sub{font-size:11.5px;color:var(--cr3);line-height:1.6;font-weight:300}
+
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--or2);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:.5px solid var(--bd);letter-spacing:.03em}
+
+.preg-list{list-style:none;margin:.3rem 0}
+.preg-list li{font-family:'Cormorant Garamond',serif;font-size:15.5px;font-style:italic;color:#DDD4C4;padding:.45rem 0;line-height:1.55;border-bottom:.5px solid var(--wh);font-weight:300}
+.preg-list li:last-child{border-bottom:none}
+.preg-list li::before{content:'"';color:var(--or1);font-size:18px;margin-right:2px}
+
+.prac-list{list-style:none;margin:.3rem 0}
+.prac-list li{display:flex;gap:10px;padding:.5rem 0;font-size:12.5px;color:var(--cr3);line-height:1.5;border-bottom:.5px solid var(--wh);font-weight:300}
+.prac-list li:last-child{border-bottom:none}
+.pnum{width:18px;height:18px;border-radius:50%;background:rgba(201,169,110,.14);color:var(--or2);font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:.5px solid var(--bd)}
+
+.trab-list{list-style:none;margin:.3rem 0}
+.trab-list li{display:flex;gap:9px;padding:.45rem 0;font-size:12.5px;color:var(--cr3);line-height:1.5;border-bottom:.5px solid var(--wh);font-weight:300}
+.trab-list li:last-child{border-bottom:none}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--or1);flex-shrink:0;margin-top:7px;opacity:.7}
+
+.plan-day{background:rgba(255,255,255,.04);border:.5px solid var(--wh2);border-radius:6px;padding:.75rem;margin-bottom:.5rem}
+.plan-day-num{font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--or1);font-weight:500;margin-bottom:.25rem;display:block}
+.plan-day-text{font-size:12.5px;color:var(--cr3);line-height:1.6;font-weight:300}
+
+.cta-box{background:#3D2660;border:.5px solid var(--bd2);border-radius:10px;padding:1.5rem;margin-top:1.5rem;text-align:center}
+.cta-orb{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#F5DFA8,#C9A96E 65%,transparent 100%);margin:0 auto .75rem;opacity:.85}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:300;color:#F0EAE0;margin-bottom:.4rem;line-height:1.2}
+.cta-title em{font-style:italic;color:var(--or2)}
+.cta-sub{font-size:12px;color:var(--cr3);line-height:1.65;margin-bottom:1rem;font-weight:300}
+
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--wh);background:#2D1B4E}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;color:var(--cr3);letter-spacing:.3em}
+.footer-sub{font-size:8px;color:var(--cr3);opacity:.35;letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="orb"></div>
+  <span class="h-eye"><span class="hline"></span>Connie Illarramendi · Método SAMAI<span class="hline"></span></span>
+  <h1 class="h-title">¿Qué me dice<br><em>mi cuerpo hoy?</em></h1>
+  <p class="h-sub">Una guía de autoindagación que traduce tus síntomas en información sobre lo que necesitás trabajar.</p>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:14%"></div></div>
+  <div class="prog-labels">
+    <span class="pl on" id="pl1">Síntoma</span>
+    <span class="pl" id="pl2">Zona</span>
+    <span class="pl" id="pl3">Emoción</span>
+    <span class="pl" id="pl4">Patrón</span>
+    <span class="pl" id="pl5">Mapa</span>
+    <span class="pl" id="pl6">Reporte</span>
+  </div>
+</div>
+
+<!-- S1: SÍNTOMAS -->
+<div class="screen on" id="s1">
+  <p class="stitle">¿Qué es lo que más<br><em>sentís hoy?</em></p>
+  <p class="ssub">Seleccioná todos los síntomas que resuenen ahora mismo.</p>
+  <div class="opts">
+    <div class="opt" onclick="multi(this,'sint','cansancio')"><div class="opt-label">Cansancio extremo</div><div class="opt-sub">No mejora aunque descanses</div></div>
+    <div class="opt" onclick="multi(this,'sint','dolor')"><div class="opt-label">Dolor físico</div><div class="opt-sub">Persistente, sin causa médica clara</div></div>
+    <div class="opt" onclick="multi(this,'sint','tension')"><div class="opt-label">Tensión muscular</div><div class="opt-sub">Cuello, hombros, mandíbula, espalda</div></div>
+    <div class="opt" onclick="multi(this,'sint','digestivo')"><div class="opt-label">Síntomas digestivos</div><div class="opt-sub">Panza cerrada, colon, náuseas, acidez</div></div>
+    <div class="opt" onclick="multi(this,'sint','insomnio')"><div class="opt-label">Dificultad para dormir</div><div class="opt-sub">Insomnio, sueños intensos</div></div>
+    <div class="opt" onclick="multi(this,'sint','ansiedad')"><div class="opt-label">Ansiedad</div><div class="opt-sub">Pecho apretado, respiración cortada</div></div>
+    <div class="opt" onclick="multi(this,'sint','desconexion')"><div class="opt-label">Desconexión</div><div class="opt-sub">En automático, no me siento presente</div></div>
+    <div class="opt" onclick="multi(this,'sint','llanto')"><div class="opt-label">Ganas de llorar</div><div class="opt-sub">Sin saber bien por qué</div></div>
+    <div class="opt" onclick="multi(this,'sint','irritabilidad')"><div class="opt-label">Irritabilidad</div><div class="opt-sub">Todo me molesta, estoy al límite</div></div>
+    <div class="opt" onclick="multi(this,'sint','cabeza')"><div class="opt-label">Migraña / presión</div><div class="opt-sub">Cabeza, frente, ojos, nuca</div></div>
+    <div class="opt" onclick="multi(this,'sint','piel')"><div class="opt-label">Síntomas en la piel</div><div class="opt-sub">Brotes, urticaria, picazón sin causa</div></div>
+    <div class="opt" onclick="multi(this,'sint','vacio')"><div class="opt-label">Vacío interno</div><div class="opt-sub">Sin sentido, sin motivación</div></div>
+    <div class="opt" onclick="multi(this,'sint','garganta_s')"><div class="opt-label">Nudo en la garganta</div><div class="opt-sub">Dificultad para hablar o expresarte</div></div>
+    <div class="opt" onclick="multi(this,'sint','ciclo')"><div class="opt-label">Zona pélvica / ciclo</div><div class="opt-sub">Dolores menstruales, tensión pélvica</div></div>
+  </div>
+  <div class="disclaimer"><b>Aviso:</b> Esta herramienta es una guía de autoindagación. No es un diagnóstico médico ni reemplaza ningún tratamiento profesional.</div>
+  <button class="btn" id="b1" onclick="next(2)" disabled>Continuar →</button>
+</div>
+
+<!-- S2: ZONA -->
+<div class="screen" id="s2">
+  <p class="stitle">¿Dónde lo <em>sentís</em><br>en el cuerpo?</p>
+  <p class="ssub">Cerrá los ojos un momento. ¿Dónde está la tensión, el nudo, el peso?</p>
+  <div class="opts c1">
+    <div class="opt" onclick="uno(this,'zona','corona')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Cabeza, frente, ojos, nuca</div><div class="opt-sub">Presión mental, pensamientos que no paran</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','garganta')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Garganta, cuello, mandíbula</div><div class="opt-sub">Nudo, dificultad para expresarte</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','pecho')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Pecho, corazón, hombros</div><div class="opt-sub">Opresión, carga, dificultad para respirar</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','plexo')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Estómago, plexo solar, diafragma</div><div class="opt-sub">Ansiedad, nervios, digestión difícil</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','sacro')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Vientre, caderas, zona sacra</div><div class="opt-sub">Ciclo, creatividad bloqueada, culpa</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','raiz')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Espalda baja, piernas, pies</div><div class="opt-sub">Inestabilidad, miedo, cansancio profundo</div></div></div></div>
+    <div class="opt" onclick="uno(this,'zona','general')"><div class="zrow"><div class="zind"></div><div><div class="opt-label">Todo el cuerpo / no sé ubicarlo</div><div class="opt-sub">Agotamiento general</div></div></div></div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(1)">← Volver</button>
+    <button class="btn" id="b2" onclick="next(3)" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S3: EMOCIÓN -->
+<div class="screen" id="s3">
+  <p class="stitle">¿Qué <em>emoción</em><br>está más presente?</p>
+  <p class="ssub">Marcá todas las que resuenen hoy.</p>
+  <div class="opts">
+    <div class="opt" onclick="multi(this,'emoc','miedo')"><div class="opt-label">Miedo · Angustia</div><div class="opt-sub">Al futuro, a equivocarse, a perder</div></div>
+    <div class="opt" onclick="multi(this,'emoc','tristeza')"><div class="opt-label">Tristeza · Vacío</div><div class="opt-sub">Desgano, pesadez, ganas de llorar</div></div>
+    <div class="opt" onclick="multi(this,'emoc','rabia')"><div class="opt-label">Rabia · Frustración</div><div class="opt-sub">Injusticia, hartazgo, límites violados</div></div>
+    <div class="opt" onclick="multi(this,'emoc','culpa')"><div class="opt-label">Culpa · Vergüenza</div><div class="opt-sub">Sentí que fallé, que soy demasiado</div></div>
+    <div class="opt" onclick="multi(this,'emoc','soledad')"><div class="opt-label">Soledad · Abandono</div><div class="opt-sub">Nadie me entiende, me siento sola</div></div>
+    <div class="opt" onclick="multi(this,'emoc','agotamiento')"><div class="opt-label">Agotamiento · Hartazgo</div><div class="opt-sub">Doy todo y no recibo, no doy más</div></div>
+    <div class="opt" onclick="multi(this,'emoc','confusion')"><div class="opt-label">Confusión · Bloqueo</div><div class="opt-sub">No sé qué quiero, no puedo decidir</div></div>
+    <div class="opt" onclick="multi(this,'emoc','preocupacion')"><div class="opt-label">Preocupación crónica</div><div class="opt-sub">Mente que no para, siempre en alerta</div></div>
+    <div class="opt" onclick="multi(this,'emoc','desvalorizacion')"><div class="opt-label">Desvalorización</div><div class="opt-sub">No me siento suficiente, me comparo</div></div>
+    <div class="opt" onclick="multi(this,'emoc','impotencia')"><div class="opt-label">Impotencia</div><div class="opt-sub">Siento que nada depende de mí</div></div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(2)">← Volver</button>
+    <button class="btn" id="b3" onclick="next(4)" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S4: PATRÓN -->
+<div class="screen" id="s4">
+  <p class="stitle">¿Esto se <em>repite</em><br>en tu vida?</p>
+  <p class="ssub">La honestidad con esta pregunta es la puerta a la transformación real.</p>
+  <div class="opts c1">
+    <div class="opt" onclick="uno(this,'patron','nuevo')"><div class="opt-label">Es algo nuevo que apareció ahora</div><div class="opt-sub">No lo había sentido antes con esta intensidad.</div></div>
+    <div class="opt" onclick="uno(this,'patron','repite')"><div class="opt-label">Aparece, desaparece y vuelve</div><div class="opt-sub">Lo trabajo, mejora un tiempo, y después regresa.</div></div>
+    <div class="opt" onclick="uno(this,'patron','siempre')"><div class="opt-label">Siempre estuvo, es parte de cómo soy</div><div class="opt-sub">Lo llevo desde que me acuerdo. Lo naturalicé.</div></div>
+    <div class="opt" onclick="uno(this,'patron','familia')"><div class="opt-label">Lo vi también en mi familia de origen</div><div class="opt-sub">Mi mamá, mi abuela u otro familiar lo vivía igual.</div></div>
+    <div class="opt" onclick="uno(this,'patron','relaciones')"><div class="opt-label">Se repite en mis vínculos</div><div class="opt-sub">Siempre termino en el mismo lugar con distintas personas.</div></div>
+  </div>
+  <div class="brow">
+    <button class="btn btn-back" onclick="back(3)">← Volver</button>
+    <button class="btn" id="b4" onclick="next(5)" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- S5: MAPA + PAYWALL -->
+<div class="screen" id="s5">
+  <p class="stitle">Tu <em>mapa interior</em></p>
+  <p class="ssub">Esto es lo que tu sistema está mostrando hoy.</p>
+  <div id="mapa-visible"></div>
+  <div class="blur-card">
+    <div class="blur-inner">Emoción dominante · Seguridad y confianza · Autovaloración · Equilibrio entre dar y recibir · Origen del patrón · Lealtades invisibles · Lo que necesitás trabajar esta semana · Plan de 7 días</div>
+    <div class="blur-overlay"><div class="blur-lock">Desbloqueá tu reporte completo</div></div>
+  </div>
+  <div class="pw-box">
+    <div class="pw-orb"></div>
+    <div class="pw-title">Recibí tu<br><em>Reporte completo</em></div>
+    <div class="pw-sub">Análisis personalizado según tus respuestas — no es genérico, es tuyo.</div>
+    <div class="pw-price">USD 9.99 <span>— pago único</span></div>
+    <ul class="pw-list">
+      <li><span class="pw-dot">◈</span>Mapa completo de tus centros energéticos</li>
+      <li><span class="pw-dot">◈</span>Lectura bio de tu zona activa (hipótesis)</li>
+      <li><span class="pw-dot">◈</span>Señal energética y orientación</li>
+      <li><span class="pw-dot">◈</span>Práctica somática guiada — 10 minutos</li>
+      <li><span class="pw-dot">◈</span>7 preguntas de autoindagación profunda</li>
+      <li><span class="pw-dot">◈</span>Plan de 7 días con microacciones</li>
+    </ul>
+    <button class="btn" onclick="irGumroad()">Pagar USD 9.99 en Gumroad →</button>
+    <div class="key-wrap">
+      <span class="key-label">¿Ya pagaste? Ingresá tu código de acceso:</span>
+      <input class="key-input" id="key-in" type="text" placeholder="Ej: SAMAI-XXXX-XXXX" maxlength="30">
+      <div class="key-err" id="key-err">Código inválido. Verificá el email de Gumroad.</div>
+      <div class="key-ok" id="key-ok">¡Perfecto! Cargando tu reporte...</div>
+      <button class="btn" onclick="validar()" style="margin-top:.6rem">Desbloquear mi reporte →</button>
+    </div>
+  </div>
+  <div class="div-text">— o si preferís acompañamiento 1:1 —</div>
+  <div class="ses-box">
+    <div class="ses-title">Trabajemos juntas<br><em>en profundidad</em></div>
+    <div class="ses-sub">En el Método SAMAI acompañamos este proceso en 5 sesiones integrativas — cuerpo, emoción, historia familiar y energía.</div>
+    <button class="btn" onclick="window.open('https://instagram.com/connieillarramendi','_blank')">Reservar una sesión SAMAI →</button>
+  </div>
+  <div class="quote"><div class="quote-t" id="mapa-quote">"Lo que sentís hoy no es un error. Es información."</div></div>
+  <div class="brow"><button class="btn btn-back" onclick="back(4)">← Volver</button></div>
+</div>
+
+<!-- S6: REPORTE COMPLETO -->
+<div class="screen" id="s6">
+  <div class="rep-hero">
+    <span class="rep-eye"><span class="hline"></span>Tu reporte SAMAI personalizado<span class="hline"></span></span>
+    <div class="rep-title" id="r-tit"></div>
+    <div class="rep-sub" id="r-sub"></div>
+  </div>
+
+  <div class="sec-title">Tu mapa energético completo</div>
+  <div id="r-mapa"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">Capa 1 — Lectura bio</div>
+  <div class="card left" id="r-bio"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">Capa 2 — Señal energética</div>
+  <div class="card" id="r-energia"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">Capa 3 — Práctica somática</div>
+  <div class="card sage" id="r-somatico"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">7 preguntas de autoindagación</div>
+  <div class="card gold"><ul class="preg-list" id="r-pregs"></ul></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">Plan de 7 días</div>
+  <div id="r-plan"></div>
+
+  <div class="orn"><div class="orn-line"></div><div class="orn-dot"></div><div class="orn-line"></div></div>
+  <div class="sec-title">Para recordar esta semana</div>
+  <div class="quote"><div class="quote-t" id="r-frase"></div></div>
+
+  <div class="disclaimer"><b>Recordatorio:</b> Este reporte es una guía de autoindagación. No constituye diagnóstico médico ni psicológico. Ante cualquier síntoma persistente, consultá siempre con un profesional de la salud.</div>
+
+  <div class="cta-box">
+    <div class="cta-orb"></div>
+    <div class="cta-title">¿Querés ir<br><em>más profundo?</em></div>
+    <div class="cta-sub">Este reporte es el primer paso. Si querés que acompañe tu proceso 1:1, te espero en el Método SAMAI — 5 sesiones integrativas donde trabajamos cuerpo, emoción, historia familiar y energía.</div>
+    <button class="btn" onclick="window.open('https://instagram.com/connieillarramendi','_blank')">Escribime en Instagram →</button>
+    <button class="btn sec" onclick="restart()">Hacer el diagnóstico de nuevo</button>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">S a m a i</div>
+  <div class="footer-sub">Connie Illarramendi · Método Terapéutico Integrativo</div>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ─────────────────────────────────────
+const GUMROAD_URL = 'https://connieillarramendi.gumroad.com/l/que-me-dice-mi-cuerpo';
+// Códigos válidos — agregá más acá cada vez que alguien pague
+// O en Gumroad configurá License Keys y esos serán los códigos
+const CODIGOS = ['SAMAI-2025-CUERPO','SAMAI-2025-MAPA'];
+
+// ── ESTADO ────────────────────────────────────────────
+const S = { sint:[], zona:'', emoc:[], patron:'' };
+
+// ── DATA ──────────────────────────────────────────────
+const ZONAS = {
+  corona:   { n:'Cabeza y mente',        ch:'Chakra corona y tercer ojo', t:'Claridad mental y conexión interior', prev:'Tu centro mental está en sobrecarga. La mente trabaja en exceso para mantener el control ante lo incierto.' },
+  garganta: { n:'Garganta y cuello',      ch:'Chakra garganta',            t:'Expresión, verdad y comunicación',    prev:'Tu centro de expresión está bloqueado. Hay algo que quiere ser dicho y no encuentra salida todavía.' },
+  pecho:    { n:'Pecho y corazón',        ch:'Chakra corazón',             t:'Amor, vínculos y apertura emocional', prev:'Tu corazón está cargando más de lo que puede sostener solo. Hay algo que pide ser soltado.' },
+  plexo:    { n:'Estómago y plexo solar', ch:'Plexo solar',                t:'Poder personal y autonomía',          prev:'Tu poder personal está en pausa. El sistema pide recuperar la capacidad de decidir desde adentro.' },
+  sacro:    { n:'Vientre y sacro',        ch:'Chakra sacro',               t:'Creatividad, placer y feminidad',     prev:'Tu centro creativo y emocional está bloqueado. El placer y la fluidez piden atención.' },
+  raiz:     { n:'Espalda baja y piernas', ch:'Chakra raíz',                t:'Seguridad, pertenencia y raíces',     prev:'Tu sistema está buscando arraigo. La seguridad básica y el sentido de pertenencia piden ser trabajados.' },
+  general:  { n:'Sistema completo',       ch:'Todos los centros',          t:'Sobrecarga sistémica integral',        prev:'Todo tu sistema está activado al mismo tiempo. El cuerpo está pidiendo una pausa y atención integral.' }
+};
+
+const EMOC = {
+  miedo:'Seguridad y confianza básica', tristeza:'Conexión y amor propio',
+  rabia:'Límites y poder personal', culpa:'Autovaloración y mandatos',
+  soledad:'Vínculos y pertenencia', agotamiento:'Equilibrio entre dar y recibir',
+  confusion:'Identidad y dirección propia', preocupacion:'Control y confianza en la vida',
+  desvalorizacion:'Autoestima y merecimiento', impotencia:'Agencia y autonomía personal'
+};
+
+const PATRON = {
+  nuevo:     { niv:'Proceso emergente',        d:'Algo nuevo se está abriendo. Tu sistema está en movimiento y busca un nuevo orden.' },
+  repite:    { niv:'Patrón cíclico',           d:'Este patrón tiene historia. Algo pide ser visto completamente para poder soltarse.' },
+  siempre:   { niv:'Patrón estructural',       d:'Un programa instalado muy temprano en tu historia. Tiene raíces que pueden trabajarse.' },
+  familia:   { niv:'Patrón transgeneracional', d:'Hay lealtades invisibles al sistema familiar. No es solo tuyo: lo heredaste.' },
+  relaciones:{ niv:'Patrón vincular',          d:'El sistema se expresa a través de tus relaciones. Los vínculos son tu espejo.' }
+};
+
+const FRASES = {
+  miedo:'"El miedo te habla de algo que valorás profundamente."',
+  tristeza:'"La tristeza no es debilidad. Es el alma que todavía siente."',
+  rabia:'"La rabia dice que algo importa. Escuchala antes de soltarla."',
+  culpa:'"La culpa crónica tiene un origen que no empezó en vos."',
+  soledad:'"Sentirse sola en el proceso es señal de que necesitás contención real."',
+  agotamiento:'"El agotamiento de dar sin recibir tiene nombre en el árbol familiar."',
+  confusion:'"La confusión no es un defecto. Es la mente buscando un nuevo mapa."',
+  preocupacion:'"La preocupación es el miedo disfrazado de pensamiento."',
+  desvalorizacion:'"No te comparés. Tu historia es única y tu camino también."',
+  impotencia:'"La impotencia es una ilusión. Siempre hay algo que podés elegir."'
+};
+
+const REP = {
+  corona:{
+    tit:'Mente en<br><em>sobrecarga</em>',
+    mapa:[{z:'Cabeza y mente',ch:'Corona y tercer ojo',p:95,t:'Centro principal'},{z:'Estómago y plexo',ch:'Plexo solar',p:60,t:'Centro secundario'},{z:'Espalda baja',ch:'Chakra raíz',p:45,t:'Zona de soporte'}],
+    bio:'En la tradición de la biodescodificación, la zona de la cabeza y la mente activa suelen asociarse a una necesidad de control o comprensión ante una situación que se percibe como incierta o amenazante. El cuerpo responde con presión, migraña o bloqueo visual como forma de expresar que hay demasiada información sin procesar. No es que la mente falle: es que está trabajando en exceso para mantener la seguridad. La hipótesis de trabajo no es que algo esté mal en vos — es que hay una historia detrás de esa necesidad de controlar. Esa historia tiene raíces, y esas raíces pueden trabajarse.',
+    energia:'La polaridad de este centro tiende hacia el exceso — demasiada energía mental sin descarga corporal. El centro corona y tercer ojo funcionan mejor cuando hay un flujo constante entre intuición y acción, entre lo que se piensa y lo que se siente en el cuerpo. Cuando ese flujo se corta, la energía se acumula arriba y genera presión o agotamiento mental. El trabajo energético aquí no es apagar la mente sino crear canales de descarga hacia el cuerpo.',
+    som:'Sentate con los pies bien apoyados en el suelo. Cerrá los ojos. Tomá 3 respiraciones largas — con cada exhalación imaginá que la presión de la cabeza baja por la columna, las piernas y sale por los pies hacia la tierra. Poné una mano en la frente. Respirá hacia esa mano 5 veces. Después decite internamente: <b>"No tengo que entender todo para estar bien. Confío en mi cuerpo."</b> Repetí 3 veces. Sentí el peso de tu cuerpo. Abrí los ojos lentamente. — Versión express 2 min: Respiración 4-7-8: inhalar 4, sostener 7, exhalar 8. Repetir 4 ciclos.',
+    pregs:['¿Qué escenario catastrófico está construyendo tu mente en este momento?','¿Cuándo aprendiste que necesitabas controlar todo para estar segura?','¿Qué pasaría si te permitieras no saber por un momento?','¿Qué diferencia hay entre lo que tu mente dice y lo que tu cuerpo siente?','¿A quién en tu familia también le costaba soltar el control?','¿Qué creencia te impide confiar en que las cosas pueden estar bien sin que vos las sostengas?','¿Qué necesitaría tu mente para descansar genuinamente esta semana?'],
+    plan:[{d:'Día 1',t:'Escritura libre: 10 minutos sin filtro volcando todo lo que está en la mente. Cerrás el cuaderno. No lo releés.'},{d:'Día 2',t:'Respiración 4-7-8 antes de dormir. 4 ciclos. Observá cómo cambia tu cuerpo.'},{d:'Día 3',t:'Caminata de 20 minutos sin celular. Solo el cuerpo moviéndose.'},{d:'Día 4',t:'Preguntarte una vez por hora: "¿qué siente mi cuerpo ahora mismo?" Solo observar, no analizar.'},{d:'Día 5',t:'Escribir 3 cosas que salieron bien esta semana. Sin analizar por qué.'},{d:'Día 6',t:'Meditación de enraizamiento: pies en el suelo, 5 min, visualizar raíces que bajan.'},{d:'Día 7',t:'Releer las 7 preguntas. Elegir una y escribir una página de respuesta.'}],
+    frase:'"La mente es una herramienta poderosa. Pero no es la única forma de conocer la verdad."'
+  },
+  garganta:{
+    tit:'Voz y expresión<br><em>bloqueadas</em>',
+    mapa:[{z:'Garganta y cuello',ch:'Chakra garganta',p:95,t:'Centro principal'},{z:'Pecho y corazón',ch:'Chakra corazón',p:65,t:'Centro secundario'},{z:'Cabeza y mente',ch:'Tercer ojo',p:40,t:'Zona de soporte'}],
+    bio:'En la lectura bio, la garganta y el cuello guardan una relación directa con la expresión de la verdad propia y con la creatividad vocal. Cuando esta zona se tensa, duele o se cierra, la hipótesis es que hay palabras que no encontraron su camino hacia afuera — por miedo, por un mandato aprendido de callar, por haber aprendido que expresarse era peligroso o que "ser demasiado" traía consecuencias. El nudo en la garganta no es un defecto: es la marca de algo que todavía espera ser dicho. Y eso que espera ser dicho tiene una historia en tu árbol familiar.',
+    energia:'La energía de la garganta es vibración — literalmente. Cuando se bloquea, la vibración se contiene y genera tensión acumulada. El trabajo energético en este centro busca restaurar el movimiento: no forzar la expresión, sino crear las condiciones para que el sonido y la palabra puedan fluir sin miedo. La polaridad suele ser de contención excesiva — demasiado adentro, poco hacia afuera.',
+    som:'Poné la mano suavemente sobre la garganta. Cerrá los ojos. Respirá hacia esa mano. Empezá a tararear suavemente, sin palabras, el sonido que quiera salir. Dejalo ser roto, feo, suave — no importa. Seguí 3 minutos. Después, con voz en voz alta, decí: <b>"Tengo derecho a hablar. Mi voz importa."</b> Sentí cómo suena en el espacio. — Versión express 2 min: Tararear 1 minuto. Decir en voz alta una cosa que necesitás decir.',
+    pregs:['¿Cuándo aprendiste que era peligroso expresar lo que sentías?','¿A quién en tu familia le costaba hablar o mostrar lo que pensaba realmente?','¿Qué es lo que más querés decir y todavía no dijiste?','¿Qué creés que va a pasar si decís tu verdad?','¿A quién le tenés miedo de decepcionar con lo que pensás?','¿Qué mandato familiar hay sobre hablar, opinar o expresarse?','¿Qué sería diferente en tu vida si te permitieras ocupar espacio con tu voz?'],
+    plan:[{d:'Día 1',t:'Escribir sin enviar lo que no podés decir en voz alta. Una carta completa.'},{d:'Día 2',t:'Tararear 3 minutos mientras te duchás o cocinás. Sin pensar en cómo suena.'},{d:'Día 3',t:'Decir "no" a algo esta semana, sin dar ninguna explicación.'},{d:'Día 4',t:'Mano en la garganta, respirar hacia ahí 5 minutos, solo sentir.'},{d:'Día 5',t:'Rastrear: ¿a quién en el árbol familiar le costaba expresarse?'},{d:'Día 6',t:'Decir en voz alta frente al espejo: "Mi voz tiene valor."'},{d:'Día 7',t:'Responder una de las preguntas de arriba en voz alta, como si le hablaras a alguien.'}],
+    frase:'"Tu voz no es un problema. Es tu verdad buscando un lugar donde ser recibida."'
+  },
+  pecho:{
+    tit:'Corazón<br><em>cargado</em>',
+    mapa:[{z:'Pecho y corazón',ch:'Chakra corazón',p:95,t:'Centro principal'},{z:'Garganta y cuello',ch:'Chakra garganta',p:55,t:'Centro secundario'},{z:'Vientre y sacro',ch:'Chakra sacro',p:40,t:'Zona de soporte'}],
+    bio:'El pecho y la zona del corazón, desde la mirada bio, guardan relación con el amor recibido y dado, con los vínculos y con las pérdidas. Cuando esta zona se oprime, se cierra o duele sin causa física, la hipótesis es que hay algo que no terminó de soltarse: un duelo, un resentimiento, una pérdida de vínculo o la dificultad de recibir sin sentir que se lo debe. El corazón no está dañado — está cargando demasiado. Y esa carga muchas veces tiene raíz en lo que aprendiste sobre el amor en tu familia de origen.',
+    energia:'La energía del corazón es expansiva por naturaleza — busca conectar, dar, recibir. Cuando se bloquea, se contrae y genera una sensación de peso o de cierre. El trabajo energético aquí no es sanar el corazón como si estuviera roto, sino crear las condiciones para que vuelva a abrirse a su propio ritmo, sin forzarlo, sin apurarlo.',
+    som:'Recostarte si podés. Poné ambas manos en el pecho. Cerrá los ojos. Respirá lentamente — la inhalación expande el pecho hacia tus manos, la exhalación lo suelta. Sentí el latido. Después de 5 respiraciones, preguntate internamente: <b>"¿Qué hay aquí que todavía cargo?"</b> No busques respuesta — solo observá lo que aparece. Si viene emoción, dejala estar. Terminá diciendo: "Me permito soltar lo que ya no necesito cargar." — Versión express 2 min: Manos en el pecho. Respirar 5 ciclos. Decir: "Estoy aquí. Estoy viva."',
+    pregs:['¿Qué pérdida o duelo todavía te pesa aunque parezca que ya lo superaste?','¿Te permitís recibir cuidado o solo te sentís cómoda cuando sos vos quien da?','¿A quién le guardás un resentimiento que todavía no pudiste soltar?','¿Cuándo fue la última vez que lloraste de verdad y te sentiste mejor después?','¿Qué aprendiste sobre el amor en tu familia de origen?','¿Hay alguien a quien todavía necesitás perdonar — incluyendo a vos misma?','¿Qué significaría para vos abrir el corazón sin miedo?'],
+    plan:[{d:'Día 1',t:'Carta de perdón o despedida a algo o alguien que todavía cargás. No enviar.'},{d:'Día 2',t:'Manos en el pecho, 5 minutos, solo respirar y sentir el latido.'},{d:'Día 3',t:'Aceptar un gesto de amor o ayuda sin minimizarlo ni devolver de inmediato.'},{d:'Día 4',t:'Antes de dormir: nombrar una cosa por la que tu corazón está agradecido hoy.'},{d:'Día 5',t:'Rastrear: ¿quién en el árbol familiar también cargaba demasiado sin poder soltar?'},{d:'Día 6',t:'Permitirse llorar si viene. Sin contener, sin apurar.'},{d:'Día 7',t:'Escribir una lista de personas que te quieren. Leerla en voz alta lentamente.'}],
+    frase:'"El corazón que siente mucho no es un corazón débil. Es un corazón que todavía confía."'
+  },
+  plexo:{
+    tit:'Poder personal<br><em>en pausa</em>',
+    mapa:[{z:'Estómago y plexo',ch:'Plexo solar',p:95,t:'Centro principal'},{z:'Cabeza y mente',ch:'Tercer ojo',p:60,t:'Centro secundario'},{z:'Espalda baja',ch:'Chakra raíz',p:50,t:'Zona de soporte'}],
+    bio:'El estómago y el plexo solar, en la lectura bio, se asocian a la capacidad de digerir lo que la vida presenta — ideas, situaciones, vínculos — y de sostenerse desde el propio criterio. Cuando esta zona se contrae, se agita o duele, la hipótesis es que hay algo que el sistema no puede integrar, algo que se siente impuesto o que genera una sensación de no tener poder sobre la propia vida. La dificultad para decidir, la ansiedad estomacal o la digestión difícil son formas en las que el cuerpo dice: algo de esto no puedo digerirlo todavía.',
+    energia:'La energía del plexo solar es de fuego — acción, voluntad, decisión. Cuando se bloquea, el fuego se convierte en ansiedad en lugar de fuerza. El trabajo energético aquí busca transformar esa ansiedad en claridad: no apagar el fuego sino aprender a usarlo, a dirigirlo, a confiar en él como brújula interna.',
+    som:'De pie o sentada, poné la mano en el estómago. Respirá profundo hacia esa zona. Sentí el calor de tu mano. Empezá a mover el torso en pequeños círculos suaves. Después con voz en voz alta: <b>"Tengo poder en mi vida. Mis decisiones son válidas."</b> Si hay resistencia, observala sin empujarla. Terminá con 3 respiraciones largas. — Versión express 2 min: Sacudir los brazos 30 segundos. Respiración activadora: inhalar y exhalar rápido por la nariz 15 veces. Soltar.',
+    pregs:['¿En qué parte de tu vida sentís que alguien más tiene el poder?','¿Cuándo aprendiste que tus decisiones podían ser equivocadas o peligrosas?','¿Qué decisión estás evitando tomar porque le tenés miedo al resultado?','¿Qué necesitarías para confiar más en tu propio criterio?','¿Qué mandato hay en tu familia sobre lo que una mujer hace, aguanta o calla?','¿Qué hay en tu vida que genuinamente no podés digerir o aceptar todavía?','¿Qué sería diferente si te permitieras tomar decisiones solo porque vos querés?'],
+    plan:[{d:'Día 1',t:'Escribir 10 decisiones pequeñas que SÍ tomaste esta semana. Leerlas.'},{d:'Día 2',t:'Elegir algo solo porque vos querés, sin consultar ni pedir opinión.'},{d:'Día 3',t:'Movimiento físico activo: caminar rápido, sacudir brazos, mover el cuerpo.'},{d:'Día 4',t:'Escribir sin filtro: ¿qué hay en mi vida que no puedo digerir?'},{d:'Día 5',t:'Decir "no" a algo esta semana, sin dar ninguna explicación.'},{d:'Día 6',t:'Rastrear: ¿qué mandatos sobre el poder o la decisión había en tu familia?'},{d:'Día 7',t:'Hacer algo que siempre postergaste, aunque sea la versión más pequeña posible.'}],
+    frase:'"Nadie puede darte el poder que ya tenés adentro. Solo podés recordar que está ahí."'
+  },
+  sacro:{
+    tit:'Creatividad y placer<br><em>bloqueados</em>',
+    mapa:[{z:'Vientre y sacro',ch:'Chakra sacro',p:95,t:'Centro principal'},{z:'Pecho y corazón',ch:'Chakra corazón',p:60,t:'Centro secundario'},{z:'Estómago y plexo',ch:'Plexo solar',p:45,t:'Zona de soporte'}],
+    bio:'El vientre, la zona sacra y la pelvis, en la lectura bio, guardan relación con la creatividad, el placer, la sexualidad y la fluidez emocional. Cuando esta zona duele o se bloquea, la hipótesis es que hay un conflicto vinculado al permiso de disfrutar, de crear o de conectar con la propia sensualidad — y ese conflicto suele tener raíces en mandatos familiares que enseñaron que el placer era inmerecido, peligroso o sucio. La culpa que se asienta en esa zona no siempre es tuya: a veces viene directamente del árbol familiar.',
+    energia:'La energía del sacro es fluida — como el agua. Cuando se bloquea, deja de fluir y genera estancamiento emocional y creativo. El trabajo energético aquí busca restaurar el movimiento: a través del cuerpo, de la creatividad, del permiso genuino de sentir y de disfrutar sin condiciones.',
+    som:'Recostarte o sentarte cómodamente. Poné las manos sobre el vientre bajo. Respirá hacia esa zona. Después de 5 respiraciones, empezá a mover las caderas en pequeños círculos. Dejá que el movimiento sea lento y sin propósito. Si aparece incomodidad, solo observala. Después volvé a la quietud y preguntate: <b>"¿Qué placer me estoy negando?"</b> — Versión express 2 min: Manos en el vientre. 5 respiraciones. Mover las caderas suavemente 1 minuto.',
+    pregs:['¿Te permitís disfrutar sin sentir que tenés que ganarlo o merecerlo primero?','¿Qué mensajes recibiste en tu familia sobre el cuerpo de la mujer o el placer?','¿En qué área de tu vida bloqueaste la creatividad o el disfrute creyendo que no estaba bien?','¿Hay culpa que sentís que no es tuya pero la cargás igual?','¿Qué te daba placer de niña que dejaste de hacer con el tiempo?','¿Qué significaría para vos tener permiso real de disfrutar sin condiciones?','¿Qué mandato hay en tu árbol sobre la sexualidad o el cuerpo femenino?'],
+    plan:[{d:'Día 1',t:'Escribir qué te daba placer de niña y qué pasó con eso. Sin juzgar.'},{d:'Día 2',t:'Bailar 5 minutos sola con música que te guste. Sin pensar en cómo se ve.'},{d:'Día 3',t:'Baño consciente: tiempo sin apuro, sintiendo el agua, sin lista de pendientes.'},{d:'Día 4',t:'Rastrear: ¿qué mensajes había en tu familia sobre el placer y el cuerpo femenino?'},{d:'Día 5',t:'Hacer algo creativo sin objetivo: dibujar, cocinar algo nuevo, ordenar con música.'},{d:'Día 6',t:'Escribir: ¿qué culpa estoy cargando que no es mía? ¿De quién es?'},{d:'Día 7',t:'Darte un permiso esta semana: algo pequeño que siempre postergás porque no es para mí.'}],
+    frase:'"El placer no es un premio. Es un derecho. Y la culpa que sentís tiene una historia."'
+  },
+  raiz:{
+    tit:'En busca de<br><em>raíces y seguridad</em>',
+    mapa:[{z:'Espalda baja y piernas',ch:'Chakra raíz',p:95,t:'Centro principal'},{z:'Estómago y plexo',ch:'Plexo solar',p:55,t:'Centro secundario'},{z:'Pecho y corazón',ch:'Chakra corazón',p:40,t:'Zona de soporte'}],
+    bio:'La espalda baja, las piernas y los pies, en la lectura bio, se asocian a la seguridad básica, la pertenencia y el arraigo. Cuando esta zona está tensa, pesada o inestable, la hipótesis es que el sistema no encontró todavía dónde apoyarse — y eso suele tener historia en el árbol familiar: migraciones, pérdidas de hogar, inestabilidad económica o emocional en generaciones anteriores. El cansancio profundo que no mejora con descanso es una de las formas en que el cuerpo dice: no me siento con raíces todavía.',
+    energia:'La energía de la raíz es la más densa y la más vital — es la que sostiene todo lo demás. Cuando está débil o bloqueada, toda la estructura energética se tambalea. El trabajo aquí es lento, repetitivo y físico: el cuerpo necesita experiencias concretas y cotidianas de seguridad para empezar a creer que puede estar bien.',
+    som:'De pie, pies descalzos en el suelo si es posible. Sentí el contacto de cada pie con el piso. Respirá profundo. Empezá a doblar ligeramente las rodillas y volvé — varias veces, sintiendo el peso del cuerpo. Después, quieta, visualizá raíces que salen de tus pies hacia abajo, profundas. Con cada exhalación, las raíces crecen. Terminá diciendo: <b>"Pertenezco. Tengo lugar. Estoy en casa en mi propio cuerpo."</b> — Versión express 2 min: Pies en el suelo. Peso del cuerpo. Tres respiraciones muy largas. Decir: "Estoy aquí."',
+    pregs:['¿Cuándo aprendiste que no podías confiar en que las cosas iban a estar bien?','¿Hubo inestabilidad, migraciones o pérdidas de hogar en tu familia de origen?','¿Sentís que tenés un lugar en el mundo, en tu familia, en tu propia vida?','¿Qué necesitarías hoy para sentirte más enraizada y sostenida?','¿A quién en tu árbol le faltaron raíces, hogar o estabilidad?','¿Qué ritual cotidiano podrías crear para darte más estabilidad en el día a día?','¿Qué significa para vos tener un lugar en el mundo?'],
+    plan:[{d:'Día 1',t:'Pies descalzos en tierra natural 5 minutos. Solo sentir el contacto.'},{d:'Día 2',t:'Crear un ritual matutino simple que se repita igual todos los días de esta semana.'},{d:'Día 3',t:'Rastrear el árbol: ¿hubo migraciones, inestabilidad o pérdidas de hogar?'},{d:'Día 4',t:'Carta a la niña que no se sentía segura: decirle que hoy hay un lugar para ella.'},{d:'Día 5',t:'Caminata lenta sin destino, solo sintiendo el peso de cada paso.'},{d:'Día 6',t:'Preguntarte: ¿qué necesito para sentirme más en casa en mi propio cuerpo?'},{d:'Día 7',t:'Hacer algo que te dé sensación física de estabilidad: ordenar, cocinar, poner flores.'}],
+    frase:'"Pertenecés. Aunque nadie te lo haya dicho claramente. Aunque todavía no lo sientas del todo."'
+  },
+  general:{
+    tit:'Sistema completo<br><em>en sobrecarga</em>',
+    mapa:[{z:'Sistema completo',ch:'Todos los centros',p:90,t:'Sobrecarga integral'},{z:'Espalda baja y piernas',ch:'Chakra raíz',p:75,t:'Base afectada'},{z:'Pecho y corazón',ch:'Chakra corazón',p:70,t:'Carga emocional'}],
+    bio:'Cuando el cuerpo entero está en sobrecarga y no hay una zona específica que concentre el síntoma, la lectura bio sugiere que hay un patrón de tensión sostenida que viene de múltiples capas — emocional, familiar, energética — y que el sistema ya no puede compensar solo. No es que algo esté muy mal: es que hay demasiado activo al mismo tiempo y el cuerpo pide una pausa completa. Este patrón suele tener historia: el sistema aprendió a funcionar en modo alerta sostenida, muchas veces desde la infancia o heredado del árbol.',
+    energia:'Cuando todos los centros están activos simultáneamente, la energía no tiene dirección clara y se dispersa generando agotamiento profundo. El trabajo energético prioritario es el enraizamiento y la limpieza: devolver orden al campo antes de trabajar cualquier zona específica.',
+    som:'Recostarte. Cerrá los ojos. Poné una mano en el pecho y otra en el vientre. Respirá largo y lento — sintiendo ambas manos subir y bajar. Solo respirá y sentí el cuerpo. Si vienen pensamientos, observalos sin seguirlos. Después de 5 minutos, preguntate: <b>"¿Qué parte de mí está pidiendo parar?"</b> Escuchá lo que aparece. Terminá con 3 respiraciones muy largas. — Versión express 2 min: Manos en el cuerpo. Solo respirar. Nada más.',
+    pregs:['¿Qué estás cargando en este momento que no es tuyo?','¿Cuándo fue la última vez que descansaste de verdad, sin culpa ni pendientes?','¿Para quién o para qué estás sosteniendo todo esto?','¿Qué parte de vos está pidiendo parar?','¿Qué pasaría si te permitieras necesitar ayuda?','¿Qué estás evitando sentir manteniéndote tan ocupada o activa?','¿Qué es lo más importante que necesitás ahora mismo?'],
+    plan:[{d:'Día 1',t:'24 horas de silencio digital: sin redes, sin noticias. Solo vos.'},{d:'Día 2',t:'Escribir en dos columnas: qué cargo que es mío / qué cargo que no me pertenece.'},{d:'Día 3',t:'Pedir ayuda con algo esta semana, aunque sea algo pequeño.'},{d:'Día 4',t:'Práctica de enraizamiento: 15 min en silencio, pies en el suelo.'},{d:'Día 5',t:'Dormir una hora más de lo habitual. Sin culpa.'},{d:'Día 6',t:'Salir a caminar 20 minutos sin teléfono.'},{d:'Día 7',t:'Escribir qué necesitás realmente — no lo que deberías querer, sino lo que genuinamente necesitás.'}],
+    frase:'"No podés vaciarte para llenar a otros. El autocuidado no es egoísmo. Es condición."'
+  }
+};
+
+// ── NAVEGACIÓN ────────────────────────────────────────
+function next(n){ go('s'+n); prog(n); if(n===5) buildMapa(); }
+function back(n){ go('s'+n); prog(n); }
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  var el=document.getElementById(id); if(el) el.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prog(n){
+  var p=[14,28,44,60,80,100];
+  document.getElementById('prog').style.width=p[n-1]+'%';
+  for(var i=1;i<=6;i++) document.getElementById('pl'+i).classList.toggle('on',i<=n);
+}
+
+// ── SELECT ────────────────────────────────────────────
+function uno(el,k,v){
+  el.closest('.opts').querySelectorAll('.opt').forEach(function(o){o.classList.remove('on')});
+  el.classList.add('on'); S[k]=v;
+  el.closest('.screen').querySelector('.btn[onclick*="next"]').disabled=false;
+}
+function multi(el,k,v){
+  el.classList.toggle('on');
+  S[k]=el.classList.contains('on')?S[k].concat([v]):S[k].filter(function(x){return x!==v});
+  var scr=el.closest('.screen');
+  var btn=scr.querySelector('.btn[onclick*="next"]')||scr.querySelector('.btn:not(.btn-back)');
+  if(btn) btn.disabled=S[k].length===0;
+}
+
+// ── MAPA PARCIAL ──────────────────────────────────────
+function buildMapa(){
+  var z=ZONAS[S.zona]||ZONAS.general;
+  var temas=S.emoc.map(function(e){return EMOC[e]||e});
+  var frase=FRASES[S.emoc[0]]||'"Lo que sentís hoy no es un error. Es información."';
+
+  document.getElementById('mapa-visible').innerHTML=
+    '<div class="mapa-item">'+
+      '<div class="mapa-barra-wrap">'+
+        '<div class="mapa-barra" style="height:48px"></div>'+
+        '<div class="mapa-num">95%</div>'+
+      '</div>'+
+      '<div class="mapa-info">'+
+        '<div class="mapa-zona-name">'+z.n+'</div>'+
+        '<div class="mapa-zona-sub">'+z.ch+'</div>'+
+        '<span class="mapa-tag">Centro principal activo</span>'+
+        '<div style="margin-top:.5rem;font-size:12px;color:var(--cr3);line-height:1.65">'+z.prev+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="mapa-item">'+
+      '<div class="mapa-barra-wrap">'+
+        '<div class="mapa-barra" style="height:30px;opacity:.6"></div>'+
+        '<div class="mapa-num">62%</div>'+
+      '</div>'+
+      '<div class="mapa-info">'+
+        '<div class="mapa-zona-name">Áreas emocionales activas</div>'+
+        '<div class="tag-row">'+temas.slice(0,3).map(function(t){return '<span class="tag">'+t+'</span>'}).join('')+'</div>'+
+      '</div>'+
+    '</div>';
+
+  document.getElementById('mapa-quote').textContent=frase.replace(/"/g,'');
+}
+
+// ── PAYWALL ───────────────────────────────────────────
+function irGumroad(){
+  localStorage.setItem('samai_zona', S.zona||'general');
+  localStorage.setItem('samai_emoc', JSON.stringify(S.emoc));
+  localStorage.setItem('samai_patron', S.patron||'repite');
+  window.open(GUMROAD_URL,'_blank');
+}
+
+function validar(){
+  var cod=document.getElementById('key-in').value.trim().toUpperCase();
+  var err=document.getElementById('key-err');
+  var ok=document.getElementById('key-ok');
+  err.style.display='none'; ok.style.display='none';
+
+  if(!cod){
+    err.textContent='Por favor ingresá tu código.';
+    err.style.display='block'; return;
+  }
+
+  if(CODIGOS.indexOf(cod)>-1){
+    localStorage.setItem('samai_acceso','true');
+    ok.style.display='block';
+    setTimeout(function(){ mostrarReporte(); },1200);
+  } else {
+    err.textContent='Código inválido. Verificá que lo copiaste completo desde el email de Gumroad.';
+    err.style.display='block';
+  }
+}
+
+// ── REPORTE COMPLETO ──────────────────────────────────
+function mostrarReporte(){
+  // Recuperar estado — puede venir de localStorage si volvió de Gumroad
+  var zona = S.zona || localStorage.getItem('samai_zona') || 'general';
+  var patron = S.patron || localStorage.getItem('samai_patron') || 'repite';
+  var emocRaw = localStorage.getItem('samai_emoc');
+  var emoc = S.emoc.length > 0 ? S.emoc : (emocRaw ? JSON.parse(emocRaw) : []);
+
+  var z=ZONAS[zona]||ZONAS.general;
+  var p=PATRON[patron]||PATRON.repite;
+  var r=REP[zona]||REP.general;
+  var temas=emoc.map(function(e){return EMOC[e]||e});
+
+  go('s6'); prog(6);
+
+  document.getElementById('r-tit').innerHTML=r.tit;
+  document.getElementById('r-sub').innerHTML=z.n+' · '+z.ch+' · '+p.niv;
+
+  // MAPA
+  document.getElementById('r-mapa').innerHTML=r.mapa.map(function(m){
+    return '<div class="mapa-item">'+
+      '<div class="mapa-barra-wrap">'+
+        '<div class="mapa-barra" style="height:'+Math.round(m.p*0.48)+'px;opacity:'+Math.min(1,0.4+m.p*0.006)+'"></div>'+
+        '<div class="mapa-num">'+m.p+'%</div>'+
+      '</div>'+
+      '<div class="mapa-info">'+
+        '<div class="mapa-zona-name">'+m.z+'</div>'+
+        '<div class="mapa-zona-sub">'+m.ch+'</div>'+
+        '<span class="mapa-tag">'+m.t+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('')+
+  '<div class="card" style="margin-top:.5rem">'+
+    '<span class="clabel">Emociones involucradas</span>'+
+    '<div class="tag-row">'+temas.map(function(t){return '<span class="tag">'+t+'</span>'}).join('')+'</div>'+
+    '<div style="margin-top:.5rem;font-size:12px;color:var(--cr3);line-height:1.6">'+p.d+'</div>'+
+  '</div>';
+
+  // BIO
+  document.getElementById('r-bio').innerHTML=
+    '<span class="clabel">Hipótesis de conflicto — inspirada en biodescodificación</span>'+
+    '<div class="cbody">'+r.bio+'</div>';
+
+  // ENERGÍA
+  document.getElementById('r-energia').innerHTML=
+    '<span class="clabel">Orientación y polaridad energética</span>'+
+    '<div class="cbody">'+r.energia+'</div>';
+
+  // SOMÁTICO
+  document.getElementById('r-somatico').innerHTML=
+    '<span class="clabel s">Práctica guiada — 10 minutos</span>'+
+    '<div class="cbody">'+r.som+'</div>';
+
+  // PREGUNTAS
+  document.getElementById('r-pregs').innerHTML=
+    r.pregs.map(function(p){return '<li>'+p+'</li>'}).join('');
+
+  // PLAN
+  document.getElementById('r-plan').innerHTML=
+    r.plan.map(function(d){
+      return '<div class="plan-day">'+
+        '<span class="plan-day-num">'+d.d+'</span>'+
+        '<div class="plan-day-text">'+d.t+'</div>'+
+      '</div>';
+    }).join('');
+
+  // FRASE
+  document.getElementById('r-frase').textContent=r.frase;
+}
+
+function restart(){
+  S.sint=[];S.zona='';S.emoc=[];S.patron='';
+  localStorage.removeItem('samai_acceso');
+  document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('on')});
+  document.querySelectorAll('.btn').forEach(function(b){
+    if(b.id&&b.id.startsWith('b')) b.disabled=true;
+  });
+  go('s1'); prog(1);
+}
+</script>
+</body>
+</html>
